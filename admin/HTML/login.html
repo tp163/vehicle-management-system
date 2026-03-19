@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSMS | Expert Vehicle Care</title>
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="#">
+                <i class="bi bi-gear-fill"></i> VSMS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#mechanics">Mechanics</a></li>
+                    <li class="nav-item ms-lg-3">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> Login
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" onclick="setLoginType('Customer')">Customer Login</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" onclick="setLoginType('Admin')">Admin Login</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <!-- Hero Section -->
+<header class="hero-section text-center py-5">
+    <div class="container">
+        <!-- Main Heading -->
+        <h1 class="display-4 fw-bold mb-3">Chinthaka Service Center</h1>
+
+        <!-- Added Image Container -->
+        <div class="hero-img-container mb-4">
+            <img src="https://images.unsplash.com/photo-1486006396193-47106ac8990c?auto=format&fit=crop&q=80&w=1000" 
+                 alt="Vehicle Maintenance Center" 
+                 class="img-fluid rounded shadow-lg hero-main-img">
+        </div>
+
+        <!-- Description and Buttons -->
+        <p class="lead mb-4 mx-auto" style="max-width: 700px;">
+            Professional maintenance, transparent pricing, and expert mechanics at your fingertips. 
+            We ensure your car stays on the road longer and safer.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="#" class="btn btn-primary btn-lg px-5 shadow" data-bs-toggle="modal" data-bs-target="#loginModal">Book a Service</a>
+            
+        </div>
+    </div>
+</header>
+
+    <!-- Services Section -->
+    <section id="services" class="py-5">
+        <div class="container text-center">
+            <h2 class="section-title">Our Services</h2>
+            <div class="row g-4 mt-4">
+                <div class="col-md-4">
+                    <div class="card service-card">
+                        <i class="bi bi-droplet-fill text-primary display-4"></i>
+                        <h4>Oil & Filter Change</h4>
+                        <p>Keep your engine running smoothly with premium synthetic oils.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card service-card">
+                        <i class="bi bi-shield-check text-primary display-4"></i>
+                        <h4>Brake Inspection</h4>
+                        <p>Safety first! Full diagnostics and pad replacements.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card service-card">
+                        <i class="bi bi-cpu text-primary display-4"></i>
+                        <h4>Computer Diagnostics</h4>
+                        <p>Scanning and clearing error codes with modern technology.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-5 bg-light">
+        <div class="container text-center">
+            <h2 class="section-title">Standard Pricing</h2>
+            <div class="row g-4 mt-4 justify-content-center">
+                <div class="col-md-3">
+                    <div class="pricing-card">
+                        <h5>Basic Check</h5>
+                        <h2 class="text-primary">$49</h2>
+                        <ul class="list-unstyled">
+                            <li>Oil Check</li>
+                            <li>Tire Rotation</li>
+                            <li>Fluid Top-up</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="pricing-card active">
+                        <span class="badge bg-warning text-dark mb-2">Most Popular</span>
+                        <h5>Full Service</h5>
+                        <h2 class="text-primary">$120</h2>
+                        <ul class="list-unstyled">
+                            <li>Brake Check</li>
+                            <li>Filter Replacement</li>
+                            <li>Engine Cleaning</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mechanics Section -->
+    <section id="mechanics" class="py-5">
+        <div class="container text-center">
+            <h2 class="section-title">Our Expert Mechanics</h2>
+            <div class="row g-4 mt-4">
+                <div class="col-md-4">
+                    <img src="https://i.pravatar.cc/150?u=1" class="rounded-circle mb-3" width="120" alt="Mechanic">
+                    <h5>Mike Johnson</h5>
+                    <p class="text-muted">Senior Engine Specialist</p>
+                </div>
+                <div class="col-md-4">
+                    <img src="https://i.pravatar.cc/150?u=2" class="rounded-circle mb-3" width="120" alt="Mechanic">
+                    <h5>Sarah Connor</h5>
+                    <p class="text-muted">Diagnostics Expert</p>
+                </div>
+                <div class="col-md-4">
+                    <img src="https://i.pravatar.cc/150?u=3" class="rounded-circle mb-3" width="120" alt="Mechanic">
+                    <h5>David Smith</h5>
+                    <p class="text-muted">Brake & Suspension Pro</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="mb-5">What Our Customers Say</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="fst-italic">"The online tracking system is amazing. I knew exactly when my car was ready!"</p>
+                    <h6>- Robert P.</h6>
+                </div>
+                <div class="col-md-4">
+                    <p class="fst-italic">"Best pricing in town and very professional mechanics."</p>
+                    <h6>- Emily R.</h6>
+                </div>
+                <div class="col-md-4">
+                    <p class="fst-italic">"Fast, reliable and very easy to book through the website."</p>
+                    <h6>- Kevin L.</h6>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="loginTitle">Login</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 mt-2">Sign In</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+ <!-- Footer -->
+<footer class="footer bg-dark text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row">
+
+            <!-- About -->
+            <div class="col-md-4 mb-4">
+                <h4 class="text-primary fw-bold">VSMS</h4>
+                <p class="text-light small">
+                    Vehicle Service Management System helps manage vehicle repairs,
+                    service history, spare parts inventory, and customer records
+                    efficiently in one platform.
+                </p>
+
+                <!-- Social Icons -->
+                <div class="mt-3">
+                    <a href="#" class="text-white me-3 fs-5"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white me-3 fs-5"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-white me-3 fs-5"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-white fs-5"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-3 mb-4">
+                <h5 class="fw-bold">Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#" class="text-light text-decoration-none">Home</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Services</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+                    <li><a href="#" class="text-light text-decoration-none">Terms & Conditions</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-md-3 mb-4">
+                <h5 class="fw-bold">Contact</h5>
+                <p class="small mb-1"><i class="bi bi-geo-alt"></i> 123 Garage Lane, Auto City</p>
+                <p class="small mb-1"><i class="bi bi-telephone"></i> +1 234 567 890</p>
+                <p class="small"><i class="bi bi-envelope"></i> support@vsms.com</p>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="col-md-2 mb-4">
+                <h5 class="fw-bold">Subscribe</h5>
+                <p class="small">Get service updates.</p>
+                <form>
+                    <input type="email" class="form-control form-control-sm mb-2" placeholder="Email">
+                    <button class="btn btn-primary btn-sm w-100">Subscribe</button>
+                </form>
+            </div>
+
+        </div>
+
+        <hr class="border-secondary">
+
+        <div class="text-center">
+            <p class="small mb-0">
+                © 2026 Vehicle Service Management System | All Rights Reserved
+            </p>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

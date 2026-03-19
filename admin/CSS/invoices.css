@@ -1,0 +1,62 @@
+body {
+    background-color: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar Styling (Matches Dashboard) */
+.sidebar {
+    height: 100vh;
+    width: 240px;
+    position: fixed;
+    top: 0; left: 0;
+    background-color: #001f3f;
+    color: white;
+    z-index: 1000;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 25px;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border-left: 4px solid #0d6efd;
+}
+
+.main-content {
+    margin-left: 240px;
+    padding: 30px;
+}
+
+/* Professional Paper Invoice Styling */
+.invoice-paper {
+    background: white !important;
+    min-height: 700px;
+    font-size: 0.95rem;
+}
+
+.table thead th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: #f8f9fa;
+}
+
+/* Badge styling for Payment status */
+.badge-paid { background-color: #d1e7dd; color: #0f5132; }
+.badge-pending { background-color: #fff3cd; color: #664d03; }
+
+/* Hide other elements when printing */
+@media print {
+    .sidebar, .navbar, .btn, .no-print, .card, .modal-header, .modal-footer {
+        display: none !important;
+    }
+    body { background: white !important; }
+    .main-content { margin-left: 0; padding: 0; }
+    .modal { position: static; display: block; overflow: visible; }
+    .modal-dialog { max-width: 100%; margin: 0; padding: 0; }
+}

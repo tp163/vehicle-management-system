@@ -1,0 +1,56 @@
+body {
+    background-color: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+    height: 100vh;
+    width: 240px;
+    position: fixed;
+    top: 0; left: 0;
+    background-color: #001f3f;
+    color: white;
+    z-index: 1000;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 25px;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border-left: 4px solid #0d6efd;
+}
+
+.main-content {
+    margin-left: 240px;
+    padding: 30px;
+}
+
+.table thead th {
+    font-size: 0.85rem;
+    color: #6c757d;
+    padding: 15px;
+}
+
+.table tbody td {
+    padding: 15px;
+}
+
+.cust-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #eef2f7;
+    color: #0d6efd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+    margin-right: 12px;
+}

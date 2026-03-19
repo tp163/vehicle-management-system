@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal - VSMS</title>
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --primary-color: #0d6efd; --bg-light: #f8f9fa; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        .navbar-brand {
+    font-weight: bold;
+    letter-spacing: 1px;
+    }
+        .hero-section { background: linear-gradient(45deg, #0d6efd, #004dbb); color: white; padding: 40px 0; border-radius: 0 0 2rem 2rem; }
+        
+        .status-card { border: none; border-radius: 15px; transition: transform 0.2s; }
+        .status-card:hover { transform: translateY(-5px); }
+
+        .vehicle-card { border: none; border-radius: 12px; overflow: hidden; }
+        .plate-number { background: #333; color: #fff; padding: 2px 10px; border-radius: 5px; font-family: monospace; }
+        
+        /* Step Tracker */
+        .step-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 20px; }
+        .step-item { text-align: center; z-index: 2; flex: 1; }
+        .step-dot { width: 30px; height: 30px; background: #ccc; border-radius: 50%; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; color: white; }
+        .step-item.active .step-dot { background: #198754; box-shadow: 0 0 10px rgba(25, 135, 84, 0.5); }
+        .step-item.active .step-label { color: #198754; font-weight: bold; }
+        .step-line { position: absolute; top: 15px; left: 10%; right: 10%; height: 2px; background: #ccc; z-index: 1; }
+
+        /* Small Calendar Styles */
+        .calendar-widget { font-family: 'Segoe UI', sans-serif; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 5px; }
+        .calendar-day-name { font-size: 0.8rem; color: #6c757d; font-weight: bold; }
+        .calendar-date { padding: 5px 0; border-radius: 5px; cursor: pointer; transition: background 0.2s; font-size: 0.9rem; }
+        .calendar-date:hover { background: #e9ecef; }
+        .calendar-date.active { background: var(--primary-color); color: white; font-weight: bold; }
+        .calendar-date.has-event { border-bottom: 2px solid #dc3545; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-gear-fill me-2"></i>VSMS CUSTOMER</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="customer-dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="my-vehicles.html">My Vehicles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="vehicle-history.html">History</a></li>
+                    <li class="nav-item dropdown">
+                        <!-- FIXED: Added id="userNameDisplay" here -->
+                        <a class="nav-link dropdown-toggle" href="#" id="userNameDisplay" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> Amila Sandaruwan
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li><a class="dropdown-item" href="#">Profile Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="../logout.html">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome Hero -->
+    <section class="hero-section shadow-sm mb-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="fw-bold">Welcome back, Amila!</h2>
+                    <p class="mb-0 text-white-50">Your Mitsubishi Lancer is currently being serviced.</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <button class="btn btn-light btn-lg rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#bookServiceModal">
+                        <i class="bi bi-calendar-check me-2"></i>Book a Service
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mb-5">
+        <div class="row g-4">
+            
+            <!-- Live Tracking Section -->
+            <div class="col-lg-8">
+                <div class="card status-card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Live Service Status</h5>
+                            <span class="badge bg-success">In Progress</span>
+                        </div>
+                        
+                        <div class="text-center mb-4">
+                            <h6 class="text-muted mb-1">Current Vehicle</h6>
+                            <h4 class="fw-bold">WP CAL-5050 (Mitsubishi Lancer)</h4>
+                        </div>
+
+                        <!-- Step Tracker -->
+                        <div class="position-relative py-3">
+                            <div class="step-line"></div>
+                            <div class="step-container">
+                                <div class="step-item active">
+                                    <div class="step-dot"><i class="bi bi-check"></i></div>
+                                    <div class="step-label small">Received</div>
+                                </div>
+                                <div class="step-item active">
+                                    <div class="step-dot"><i class="bi bi-check"></i></div>
+                                    <div class="step-label small">Inspection</div>
+                                </div>
+                                <div class="step-item active">
+                                    <div class="step-dot"><i class="bi bi-tools"></i></div>
+                                    <div class="step-label small">Repairing</div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-dot"><i class="bi bi-flag"></i></div>
+                                    <div class="step-label small">Ready</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info border-0 mt-4 d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                            <div>
+                                <strong>Mechanic's Note:</strong> Oil filter replaced. Currently checking brake pads. Estimated completion: Today, 4:00 PM.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Side Column -->
+            <div class="col-lg-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card status-card shadow-sm bg-white p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-car-front text-primary fs-3"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-0">My Garage</h6>
+                                    <h4 class="fw-bold mb-0">1 Vehicles</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card status-card shadow-sm bg-white p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                                    <i class="bi bi-star-fill text-warning fs-3"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-0">Loyalty Points</h6>
+                                    <h4 class="fw-bold mb-0">1,250</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card status-card shadow-sm bg-white p-3 border-start border-4 border-danger">
+                            <h6 class="text-muted mb-1">Next Recommended Service</h6>
+                            <p class="fw-bold mb-0 text-danger"><i class="bi bi-calendar-event me-2"></i>15th Nov 2026</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Small Calendar Widget -->
+                    <div class="col-12">
+                        <div class="card status-card shadow-sm bg-white p-3 calendar-widget">
+                            <div class="calendar-header">
+                                <button class="btn btn-sm btn-light border-0" id="prevMonth"><i class="bi bi-chevron-left"></i></button>
+                                <span id="monthYearDisplay">Month 2026</span>
+                                <button class="btn btn-sm btn-light border-0" id="nextMonth"><i class="bi bi-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-days mb-2">
+                                <div class="calendar-day-name">Su</div>
+                                <div class="calendar-day-name">Mo</div>
+                                <div class="calendar-day-name">Tu</div>
+                                <div class="calendar-day-name">We</div>
+                                <div class="calendar-day-name">Th</div>
+                                <div class="calendar-day-name">Fr</div>
+                                <div class="calendar-day-name">Sa</div>
+                            </div>
+                            <div class="calendar-days" id="calendarGrid">
+                                <!-- Calendar dates generated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- My Garage Section -->
+            <div class="col-12 mt-4">
+                <h5 class="fw-bold mb-3">My Garage</h5>
+                <!-- We removed the hardcoded cards. JavaScript will fill this div. -->
+                <div class="row g-3" id="customerGarage">
+                    <div class="col-12 text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="text-muted mt-2">Loading your vehicles...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Service History -->
+            <div class="col-12 mt-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="fw-bold mb-0">Recent Service History</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Vehicle</th>
+                                        <th>Service Type</th>
+                                        <th>Cost</th>
+                                        <th>Invoice</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>18 March 2026</td>
+                                        <td>Toyota Corolla</td>
+                                        <td>Full Service</td>
+                                        <td>Rs. 15,500</td>
+                                        <td><button class="btn btn-sm btn-light border"><i class="bi bi-download me-1"></i>PDF</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>18 March 2026</td>
+                                        <td>Mitsubishi Montero</td>
+                                        <td>Brake Pad Replacement</td>
+                                        <td>Rs. 8,200</td>
+                                        <td><button class="btn btn-sm btn-light border"><i class="bi bi-download me-1"></i>PDF</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal: Book Service -->
+<div class="modal fade" id="bookServiceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Schedule New Service</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Select Vehicle</label>
+                        <select id="bVehicle" class="form-select" required>
+                            <!-- Options loaded dynamically via JS -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Preferred Date</label>
+                        <input type="date" id="bDate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Service Type</label>
+                        <select id="bType" class="form-select" required>
+                            <option>Full Service</option>
+                            <option>Oil Change</option>
+                            <option>Mechanical Repair</option>
+                            <option>Body Work</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Specific Issues</label>
+                        <textarea id="bIssues" class="form-control" rows="3" placeholder="Describe any problems..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Request Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    // 1. Get the logged-in user
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    
+    // Safety check: if no user, kick to login
+    if (!user) { 
+        window.location.href = "../home.html"; 
+        return; 
+    }
+
+    // --- 2. THE CONNECTION LOGIC ---
+    function updateBookingDropdown() {
+        const bVehicleSelect = document.getElementById('bVehicle');
+        if (!bVehicleSelect) return;
+
+        // Fetch all vehicles from the global vehicle list (created in vehicles.html)
+        const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
+        
+        // FILTER: Only keep vehicles where the owner's name matches the current logged-in user's name
+        const myVehicles = allVehicles.filter(v => v.owner === user.name);
+
+        // Reset dropdown
+        bVehicleSelect.innerHTML = '<option value="WP CAL-5050" selected>WP CAL-5050 - Mitsubishi Lancer</option>';
+}
+        if (myVehicles.length === 0) {
+            bVehicleSelect.innerHTML = '<option value="" disabled selected>No vehicles registered. Please contact Admin.</option>';
+        } else {
+            bVehicleSelect.innerHTML = '<option value="" selected disabled>Choose your vehicle</option>';
+            myVehicles.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.plate; // We store the plate as the value
+                opt.textContent = `${v.plate} - ${v.brand} ${v.model}`;
+                bVehicleSelect.appendChild(opt);
+            });
+        }
+    }
+
+    // Call this when the page loads
+    updateBookingDropdown();
+    
+
+
+    // Also update stats cards for "My Garage" dynamically
+    function updateGarageStats() {
+        const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
+        const myVehiclesCount = allVehicles.filter(v => v.owner === user.name).length;
+        
+        const garageStatEl = document.querySelector('.card h4.fw-bold'); // Selects the "2 Vehicles" text
+        if(garageStatEl) {
+            garageStatEl.innerText = `${myVehiclesCount} Vehicles`;
+        }
+    }
+    updateGarageStats();
+
+
+
+function updateLiveTracking() {
+    const allServices = JSON.parse(localStorage.getItem('vsms_services')) || [];
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Find the most recent active service for this user
+    // (Assuming we match by owner name through vehicles)
+    const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
+    const myPlates = allVehicles.filter(v => v.owner === user.name).map(v => v.plate);
+    
+    const activeJob = allServices.find(s => myPlates.includes(s.plate) && s.status !== "Ready");
+
+    if (activeJob) {
+        document.querySelector('.text-center h4.fw-bold').innerText = `${activeJob.plate} (${activeJob.type})`;
+        // Logic to update the step-dot colors based on activeJob.status
+        const steps = document.querySelectorAll('.step-item');
+        if (activeJob.status === "In Progress") {
+            steps[0].classList.add('active');
+            steps[1].classList.add('active');
+            steps[2].classList.add('active');
+        }
+    }
+}
+updateLiveTracking();
+
+
+
+
+
+
+
+ function renderGarageCards() {
+    const garageContainer = document.getElementById('customerGarage');
+    
+    // 1. Get the current logged-in user
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) return;
+
+    // 2. Get the "Database" of vehicles (from the Admin Vehicles page)
+    const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
+
+    // 3. Filter vehicles where the owner name matches the logged-in user's name
+    // We use .trim() and .toLowerCase() to prevent errors if names were typed differently
+    const myVehicles = [
+    {
+        plate: "WP CAL-5050",
+        brand: "Mitsubishi",
+        model: "Lancer",
+        year: "2015",
+        status: "In Service",
+        owner: "Amila Sandaruwan"
+    }
+];
+
+    // 4. Update the "My Garage" Stat Card at the top of the dashboard
+    const statsGarageCount = document.querySelectorAll('.card h4.fw-bold')[0]; 
+    if (statsGarageCount) {
+        statsGarageCount.innerText = `${myVehicles.length} Vehicles`;
+    }
+
+    // 5. Build the UI
+    if (myVehicles.length === 0) {
+        garageContainer.innerHTML = `
+            <div class="col-12 text-center py-4 bg-white rounded shadow-sm border">
+                <i class="bi bi-car-front text-muted display-4"></i>
+                <p class="text-muted mt-2">No vehicles found. Please contact Admin to link your vehicle plate to your account.</p>
+            </div>`;
+        return;
+    }
+
+    garageContainer.innerHTML = ''; // Clear the "Loading" spinner
+
+    myVehicles.forEach(v => {
+        // Determine status style
+        const isInShop = v.status === "In Service" || v.status === "Due";
+        const badgeClass = isInShop ? "bg-info text-dark" : "bg-light text-success border";
+        
+        const cardHtml = `
+            <div class="col-md-6 col-lg-4">
+                <div class="card vehicle-card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="plate-number">${v.plate}</span>
+                            <span class="badge ${badgeClass}">${v.status || 'On Road'}</span>
+                        </div>
+                        <h5 class="fw-bold mb-1">${v.brand} ${v.model}</h5>
+                        <p class="text-muted small">${v.year || 'N/A'} Model</p>
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="location.href='vehicle-history.html'">
+                            <i class="bi bi-clock-history me-1"></i>View History
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        garageContainer.innerHTML += cardHtml;
+    });
+}
+
+// Execute the function
+renderGarageCards();
+
+
+
+
+    // --- 2. HANDLE BOOKING SUBMISSION ---
+    const bookingForm = document.getElementById('bookingForm');
+    bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const newBooking = {
+            id: 'BK-' + Date.now().toString().slice(-4),
+            customerName: user.name,
+            customerPhone: user.phone,
+            vehiclePlate: document.getElementById('bVehicle').value,
+            date: document.getElementById('bDate').value,
+            serviceType: document.getElementById('bType').value,
+            issues: document.getElementById('bIssues').value,
+            status: "Pending Approval", // Initial status
+            requestTime: new Date().toISOString()
+        };
+
+        // Get existing bookings or start new array
+        const allBookings = JSON.parse(localStorage.getItem('vsms_bookings')) || [];
+        allBookings.push(newBooking);
+        localStorage.setItem('vsms_bookings', JSON.stringify(allBookings));
+
+        alert("Booking request sent successfully! We will contact you shortly.");
+        
+        // Reset and close modal
+        bookingForm.reset();
+        bootstrap.Modal.getInstance(document.getElementById('bookServiceModal')).hide();
+    });
+
+   
+            // --- 2. MINI CALENDAR LOGIC ---
+            const monthYearDisplay = document.getElementById('monthYearDisplay');
+            const calendarGrid = document.getElementById('calendarGrid');
+            const prevBtn = document.getElementById('prevMonth');
+            const nextBtn = document.getElementById('nextMonth');
+
+            let currentDate = new Date();
+            let displayedMonth = currentDate.getMonth();
+            let displayedYear = currentDate.getFullYear();
+
+            const eventDates = [
+                new Date(displayedYear, displayedMonth, 15).toDateString(),
+                new Date(displayedYear, displayedMonth, 22).toDateString()
+            ];
+
+            function renderCalendar() {
+                calendarGrid.innerHTML = '';
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                monthYearDisplay.innerText = `${monthNames[displayedMonth]} ${displayedYear}`;
+
+                const firstDayIndex = new Date(displayedYear, displayedMonth, 1).getDay();
+                const lastDayDate = new Date(displayedYear, displayedMonth + 1, 0).getDate();
+
+                for (let i = 0; i < firstDayIndex; i++) {
+                    calendarGrid.appendChild(document.createElement('div'));
+                }
+
+                for (let i = 1; i <= lastDayDate; i++) {
+                    const dayDiv = document.createElement('div');
+                    dayDiv.classList.add('calendar-date');
+                    dayDiv.innerText = i;
+
+                    if (i === currentDate.getDate() && displayedMonth === currentDate.getMonth() && displayedYear === currentDate.getFullYear()) {
+                        dayDiv.classList.add('active');
+                    }
+
+                    const currentCellDateStr = new Date(displayedYear, displayedMonth, i).toDateString();
+                    if (eventDates.includes(currentCellDateStr)) {
+                        dayDiv.classList.add('has-event');
+                    }
+                    calendarGrid.appendChild(dayDiv);
+                }
+            }
+
+            prevBtn.addEventListener('click', () => {
+                displayedMonth--;
+                if (displayedMonth < 0) { displayedMonth = 11; displayedYear--; }
+                renderCalendar();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                displayedMonth++;
+                if (displayedMonth > 11) { displayedMonth = 0; displayedYear++; }
+                renderCalendar();
+            });
+
+            renderCalendar();
+        
+    </script>
+</body>
+</html>

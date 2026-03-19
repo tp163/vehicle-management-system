@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoices - VSMS</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../CSS/invoice.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h4 class="text-center">VSMS</h4>
+        <a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="customers.html"><i class="bi bi-people"></i> Customers</a>
+        <a href="vehicles.html"><i class="bi bi-car-front"></i> Vehicles</a>
+        <a href="services.html"><i class="bi bi-tools"></i> Services</a>
+        <a href="mechanics.html"><i class="bi bi-person-workspace"></i> Mechanics</a>
+        <a href="inventory.html"><i class="bi bi-box-seam"></i> Inventory</a>
+        <a class="active" href="invoices.html"><i class="bi bi-receipt"></i> Invoices</a>
+        <a href="reports.html"><i class="bi bi-file-earmark-text"></i> Reports</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <nav class="navbar bg-white shadow-sm mb-4">
+            <div class="container-fluid">
+                <h4>Invoice Management</h4>
+            </div>
+        </nav>
+
+        <!-- Create Invoice Button -->
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createInvoiceModal">
+            <i class="bi bi-receipt"></i> Create Invoice
+        </button>
+
+        <!-- Invoice Table -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                Invoice List
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Customer</th>
+                            <th>Vehicle</th>
+                            <th>Service</th>
+                            <th>Total Cost</th>
+                            <th>Payment Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceTableBody">
+                        <tr>
+                            <td>INV001</td>
+                            <td>John Doe</td>
+                            <td>WP ABC 1234</td>
+                            <td>Oil Change</td>
+                            <td>$45</td>
+                            <td><span class="badge bg-success">Paid</span></td>
+                            <td><button class="btn btn-sm btn-primary">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>INV002</td>
+                            <td>Mary Jane</td>
+                            <td>WP XYZ 5678</td>
+                            <td>Brake Replacement</td>
+                            <td>$120</td>
+                            <td><span class="badge bg-warning">Pending</span></td>
+                            <td><button class="btn btn-sm btn-primary">View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Invoice Modal -->
+    <div class="modal fade" id="createInvoiceModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Create Invoice</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="invoiceForm">
+                        <div class="mb-3">
+                            <label>Select Customer</label>
+                            <select class="form-control" id="custName">
+                                <option>John Doe</option>
+                                <option>Mary Jane</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Select Vehicle</label>
+                            <select class="form-control" id="vehName">
+                                <option>WP ABC 1234</option>
+                                <option>WP XYZ 5678</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Service Type</label>
+                            <input type="text" class="form-control" id="servType">
+                        </div>
+                        <div class="mb-3">
+                            <label>Service Cost</label>
+                            <input type="number" class="form-control" id="servCost">
+                        </div>
+                        <div class="mb-3">
+                            <label>Parts Cost</label>
+                            <input type="number" class="form-control" id="partCost">
+                        </div>
+                        <div class="mb-3">
+                            <label>Total Cost</label>
+                            <input type="number" class="form-control" id="totalCost" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label>Payment Status</label>
+                            <select class="form-control" id="payStatus">
+                                <option value="Paid">Paid</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Invoice</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../JS/invoice.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+body{
+font-family: 'Segoe UI', sans-serif;
+}
+
+/* HERO */
+
+.hero{
+height:450px;
+background:url("images/service-center.jpg") center/cover no-repeat;
+position:relative;
+}
+
+.hero::before{
+content:"";
+position:absolute;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+}
+
+.hero .container{
+position:relative;
+z-index:2;
+}
+
+/* SERVICE HOVER */
+
+.service-section img{
+transition:0.4s;
+}
+
+.service-section img:hover{
+transform:scale(1.05);
+}
+
+/* FOOTER */
+
+.footer-link{
+color:#ccc;
+text-decoration:none;
+}
+
+.footer-link:hover{
+color:#0d6efd;
+}
+
+/* SCROLL ANIMATION */
+
+.fade-in{
+opacity:0;
+transform:translateY(40px);
+transition:1s;
+}
+
+.fade-in.show{
+opacity:1;
+transform:translateY(0);
+}
