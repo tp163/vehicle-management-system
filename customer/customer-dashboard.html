@@ -148,7 +148,7 @@
                                 </div>
                                 <div>
                                     <h6 class="text-muted mb-0">My Garage</h6>
-                                    <h4 class="fw-bold mb-0">1 Vehicles</h4>
+                                    <h4 class="fw-bold mb-0" id="garageCountText">0 Vehicles</h4>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,7 @@
                                 </div>
                                 <div>
                                     <h6 class="text-muted mb-0">Loyalty Points</h6>
-                                    <h4 class="fw-bold mb-0">1,250</h4>
+                                    <h4 class="fw-bold mb-0" id="loyaltyPointsText">0</h4>
                                 </div>
                             </div>
                         </div>
@@ -169,7 +169,7 @@
                     <div class="col-12">
                         <div class="card status-card shadow-sm bg-white p-3 border-start border-4 border-danger">
                             <h6 class="text-muted mb-1">Next Recommended Service</h6>
-                            <p class="fw-bold mb-0 text-danger"><i class="bi bi-calendar-event me-2"></i>15th Nov 2026</p>
+                            <p class="fw-bold mb-0 text-danger"><i class="bi bi-calendar-event me-2"></i><span id="nextServiceDateText">No recommendation yet</span></p>
                         </div>
                     </div>
                     
@@ -399,6 +399,25 @@ let customerVehicles = []; // Global variable to store vehicles
 let bookingEventDates = new Set();
 let currentCalendarDate = new Date();
 
+function formatDateLabel(dateValue) {
+    if (!dateValue) return 'No recommendation yet';
+
+    const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return 'No recommendation yet';
+
+    return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+    });
+}
+
+function addDays(dateValue, days) {
+    const date = new Date(dateValue);
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     // 1. Get the logged-in user session
     const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -476,6 +495,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     // --- 3. FETCH VEHICLES FROM DATABASE ---
     async function loadCustomerDashboard() {
         const garageContainer = document.getElementById('customerGarage');
+        const garageCountText = document.getElementById('garageCountText');
+        const loyaltyPointsText = document.getElementById('loyaltyPointsText');
+        const nextServiceDateText = document.getElementById('nextServiceDateText');
         
         try {
             console.log("Fetching vehicles for Customer ID:", user.customer_id);
@@ -493,9 +515,43 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log("My Vehicles found:", myVehicles);
 
             // 4. Update Stats Card
-            const statsGarageCount = document.querySelectorAll('.card h4.fw-bold')[0]; 
-            if (statsGarageCount) {
-                statsGarageCount.innerText = `${myVehicles.length} Vehicles`;
+            if (garageCountText) {
+                garageCountText.innerText = `${myVehicles.length} Vehicles`;
+            }
+
+            const [invoicesResponse, bookingsResponse, servicesResponse] = await Promise.all([
+                fetch(`http://localhost:3000/api/invoices/customer/${user.customer_id}`),
+                fetch(`http://localhost:3000/api/booking-requests/customer/${user.customer_id}`),
+                fetch('http://localhost:3000/api/services')
+            ]);
+
+            const invoices = invoicesResponse.ok ? await invoicesResponse.json() : [];
+            const bookings = bookingsResponse.ok ? await bookingsResponse.json() : [];
+            const allServices = servicesResponse.ok ? await servicesResponse.json() : [];
+
+            const paidInvoiceTotal = invoices
+                .filter(invoice => String(invoice.status).toLowerCase() === 'paid')
+                .reduce((sum, invoice) => sum + Number(invoice.total_amount || invoice.paid_amount || 0), 0);
+            const loyaltyPoints = Math.round(paidInvoiceTotal * 10);
+
+            if (loyaltyPointsText) {
+                loyaltyPointsText.innerText = loyaltyPoints.toLocaleString();
+            }
+
+            const myVehicleIds = myVehicles.map(vehicle => String(vehicle.vehicle_id));
+            const latestReadyService = allServices
+                .filter(service => myVehicleIds.includes(String(service.vehicle_id)) && String(service.status).toLowerCase() === 'ready')
+                .sort((a, b) => new Date(b.service_date) - new Date(a.service_date))[0];
+
+            const upcomingBooking = bookings
+                .map(booking => booking.service_date ? new Date(booking.service_date) : null)
+                .filter(date => date && !Number.isNaN(date.getTime()) && date >= new Date())
+                .sort((a, b) => a - b)[0];
+
+            const nextServiceDate = upcomingBooking || (latestReadyService?.service_date ? addDays(latestReadyService.service_date, 90) : null);
+
+            if (nextServiceDateText) {
+                nextServiceDateText.innerText = formatDateLabel(nextServiceDate);
             }
 
             // 5. Render the cards
