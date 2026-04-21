@@ -1,147 +1,121 @@
 document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.getElementById('vehicleTableBody');
     const vehicleForm = document.getElementById('vehicleForm');
-    const searchInput = document.getElementById('vehSearch');
+    const ownerSelect = document.getElementById('vOwner');
 
-    // --- 1. LOAD DATA OR SET DEFAULTS ---
-    // Try to load from localStorage. If empty, use the default starting list.
-    let vehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [
-        { plate: "WP ABC-1234", brand: "Toyota", model: "Corolla", owner: "Amila Sandaruwan", year: 2018, status: "On Road" },
-        { plate: "WP CAL-5050", brand: "Mitsubishi", model: "Montero", owner: "Thilina Perera", year: 2021, status: "In Service" },
-        { plate: "WP KY-9988", brand: "Honda", model: "Civic", owner: "Kavinda Gamage", year: 2015, status: "Due" }
-    ];
-
-    // --- 2. PERSISTENCE FUNCTION ---
-    // Call this whenever you add, delete, or change a status
-    function saveToLocalStorage() {
-        localStorage.setItem('vsms_vehicles', JSON.stringify(vehicles));
+    // --- LOAD OWNERS INTO DROPDOWN ---
+    function loadOwnersDropdown() {
+        fetch('http://localhost:3000/customers')
+            .then(res => res.json())
+            .then(customers => {
+                ownerSelect.innerHTML = '<option value="" selected disabled>Select Owner</option>';
+                customers.forEach(cust => {
+                    const opt = document.createElement('option');
+                    opt.value = cust.customer_id; // Store ID, not name
+                    opt.textContent = `${cust.reg_no} - ${cust.full_name}`; 
+                    ownerSelect.appendChild(opt);
+                });
+            });
     }
 
-    // --- 3. DROPDOWN LOGIC (From previous step) ---
-    function updateOwnerDropdown() {
-        const ownerSelect = document.getElementById('vOwner');
-        if (!ownerSelect) return;
-        const savedCustomers = JSON.parse(localStorage.getItem('vsms_customers')) || [];
-        ownerSelect.innerHTML = '<option value="" selected disabled>Select Owner</option>';
-        savedCustomers.forEach(cust => {
-            const opt = document.createElement('option');
-            opt.value = cust.name;
-            opt.textContent = `${cust.regNo} - ${cust.name}`; 
-            ownerSelect.appendChild(opt);
-        });
+    // --- LOAD VEHICLES ---
+    function loadVehicles() {
+        fetch('http://localhost:3000/api/vehicles')
+            .then(res => res.json())
+            .then(data => renderVehicles(data));
     }
 
-    updateOwnerDropdown();
-    const vehicleModal = document.getElementById('addVehicleModal');
-    if (vehicleModal) {
-        vehicleModal.addEventListener('show.bs.modal', updateOwnerDropdown);
-    }
+    function renderVehicles(data) {
+    tableBody.innerHTML = '';
+    
+    // 1. Initialize counters
+    let total = data.length;
+    let inShop = 0;
+    let due = 0;
 
-    // --- 4. RENDER LOGIC ---
-    function renderVehicles(filteredData = vehicles) {
-        tableBody.innerHTML = '';
+    data.forEach((v) => {
+        // 2. Increment counters based on status
+        if (v.status === "In Service") inShop++;
+        if (v.status === "Due") due++;
 
-
-         // Load customers to cross-reference the Reg No
-    const savedCustomers = JSON.parse(localStorage.getItem('vsms_customers')) || [];
-
-        let inShop = 0;
-        let due = 0;
-
-        filteredData.forEach((v, index) => {
-
-            // Find the customer object that matches the vehicle owner's name
-        const ownerData = savedCustomers.find(c => c.name === v.owner);
-        const displayRegNo = ownerData ? ownerData.regNo : "N/A"; // Get Reg No or show N/A
-
-            if (v.status === "In Service") inShop++;
-            else if (v.status === "Due") due++;
-
-            let statusClass = v.status === "In Service" ? "bg-info" : 
-                              v.status === "Due" ? "bg-warning text-dark" : "bg-success";
-            
-            const row = `
-               <tr>
-                <td><span class="plate-badge shadow-sm">${v.plate}</span></td>
-                <td><h6 class="mb-0 fw-bold">${v.brand}</h6><small class="text-muted">${v.model}</small></td>
-                <td>
-                    <div class="fw-bold">${v.owner}</div>
-                    <small class="text-primary fw-bold" style="font-size: 0.75rem;">${displayRegNo}</small>
-                </td>
-                <td>${v.year}</td>
-                <td><span class="badge ${statusClass}">${v.status}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-dark" onclick="toggleVehicleStatus(${index})" title="Change Status">
-                        <i class="bi bi-arrow-repeat"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-primary" onclick="alert('Viewing Service History for ${v.plate}')">
-                        <i class="bi bi-file-earmark-medical"></i>
-                    </button>
-                    <button class="btn btn-sm btn-light border" onclick="deleteVehicle(${index})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-
-        if(document.getElementById('totalVehicles')) document.getElementById('totalVehicles').innerText = vehicles.length;
-        if(document.getElementById('inShopCount')) document.getElementById('inShopCount').innerText = inShop;
-        if(document.getElementById('dueCount')) document.getElementById('dueCount').innerText = due;
-    }
-
-    // --- 5. ACTION LOGIC (WITH SAVING) ---
-
-    // Change Status and Save
-    window.toggleVehicleStatus = (index) => {
-        const statuses = ["On Road", "In Service", "Due"];
-        let currentIdx = statuses.indexOf(vehicles[index].status);
-        let nextIdx = (currentIdx + 1) % statuses.length;
-        vehicles[index].status = statuses[nextIdx];
+        let statusClass = v.status === "In Service" ? "bg-info" : 
+                          v.status === "Due" ? "bg-warning text-dark" : "bg-success";
         
-        saveToLocalStorage(); // <--- SAVE
-        renderVehicles();
-    };
+        tableBody.innerHTML += `
+           <tr>
+            <td><span class="plate-badge">${v.plate_no}</span></td>
+            <td><h6 class="mb-0 fw-bold">${v.brand}</h6><small>${v.model}</small></td>
+            <td><div class="fw-bold">${v.owner_name}</div></td>
+            <td>${v.year}</td>
+            <td><span class="badge ${statusClass}">${v.status}</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-dark" onclick="toggleVehicleStatus(${v.vehicle_id}, '${v.status}')">
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
+                <button class="btn btn-sm btn-light border" onclick="deleteVehicle(${v.vehicle_id})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>`;
+    });
 
-    // Add Vehicle and Save
+    // 3. Update the Stats Cards in the HTML
+    // Make sure these IDs match the IDs in your HTML file!
+    if(document.getElementById('totalVehicles')) {
+        document.getElementById('totalVehicles').innerText = total;
+    }
+    if(document.getElementById('inShopCount')) {
+        document.getElementById('inShopCount').innerText = inShop;
+    }
+    if(document.getElementById('dueCount')) {
+        document.getElementById('dueCount').innerText = due;
+    }
+}
+
+    // --- SAVE ---
     vehicleForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const newVeh = {
-            plate: document.getElementById('vPlate').value.toUpperCase(),
+            plate_no: document.getElementById('vPlate').value.toUpperCase(),
             brand: document.getElementById('vBrand').value,
             model: document.getElementById('vModel').value,
-            owner: document.getElementById('vOwner').value,
+            customer_id: document.getElementById('vOwner').value, // This is the ID now
             year: document.getElementById('vYear').value,
             status: "On Road"
         };
-        vehicles.push(newVeh);
-        
-        saveToLocalStorage(); // <--- SAVE
-        renderVehicles();
 
-        const modalEl = document.getElementById('addVehicleModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        if (modalInstance) modalInstance.hide();
-        vehicleForm.reset();
+        fetch('http://localhost:3000/api/vehicles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newVeh)
+        }).then(() => {
+            loadVehicles();
+            bootstrap.Modal.getInstance(document.getElementById('addVehicleModal')).hide();
+            vehicleForm.reset();
+        });
     });
 
-    // Delete Vehicle and Save
-    window.deleteVehicle = (index) => {
-        if(confirm("Remove this vehicle from registry?")) {
-            vehicles.splice(index, 1);
-            saveToLocalStorage(); // <--- SAVE
-            renderVehicles();
-        }
+    window.toggleVehicleStatus = (id, current) => {
+        const statuses = ["On Road", "In Service", "Due"];
+        let next = statuses[(statuses.indexOf(current) + 1) % statuses.length];
+        fetch(`http://localhost:3000/api/vehicles/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: next })
+        }).then(() => loadVehicles());
     };
 
-    // Search Logic
-    searchInput.addEventListener('keyup', () => {
-        const val = searchInput.value.toUpperCase();
-        const filtered = vehicles.filter(v => v.plate.includes(val));
-        renderVehicles(filtered);
-    });
+    window.deleteVehicle = (id) => {
+        if(confirm("Delete?")) fetch(`http://localhost:3000/api/vehicles/${id}`, { method: 'DELETE' }).then(() => loadVehicles());
+    };
 
-    // Initial render
-    renderVehicles();
+    loadVehicles();
+    loadOwnersDropdown();
+// Fill the dropdown when page opens
+
+    // Refresh dropdown whenever the modal is opened (to catch new customers)
+    const modalEl = document.getElementById('addVehicleModal');
+    if (modalEl) {
+        modalEl.addEventListener('show.bs.modal', loadOwnersDropdown);
+    }
 });

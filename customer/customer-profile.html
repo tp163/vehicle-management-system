@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - VSMS</title>
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --primary-color: #0d6efd; --bg-light: #f8f9fa; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .hero-section { 
+            background: linear-gradient(45deg, #0d6efd, #004dbb); 
+            color: white; 
+            padding: 40px 0; 
+            border-radius: 0 0 2rem 2rem; 
+        }
+        
+        .profile-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+        }
+        
+        .profile-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .profile-header {
+            background: linear-gradient(45deg, #0d6efd, #004dbb);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 40px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-control:focus {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            font-size: 15px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        }
+        
+        .btn-save {
+            background: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        .btn-save:hover {
+            background: #0b5ed7;
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-left: 10px;
+            transition: background 0.3s;
+        }
+        
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+        
+        .btn-edit {
+            background: var(--primary-color);
+            border: none;
+            padding: 8px 20px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        
+        .btn-edit:hover {
+            background: #0b5ed7;
+        }
+        
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            margin-top: 5px;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .view-section.hidden {
+            display: none;
+        }
+        
+        .alert-message {
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .alert-message.show {
+            display: block;
+        }
+        
+        .spinner-loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .spinner-loader.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-gear-fill me-2"></i>VSMS CUSTOMER</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="customer-dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="my-vehicles.html">My Vehicles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="vehicle-history.html">History</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="userNameDisplay" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> Profile
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li><a class="dropdown-item active" href="customer-profile.html">Profile Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="../logout.html">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome Hero -->
+    <section class="hero-section shadow-sm mb-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <h2 class="fw-bold"><i class="bi bi-person-fill me-2"></i>My Profile</h2>
+                    <p class="mb-0 text-white-50">Manage your account information</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Alert Messages -->
+                <div id="successAlert" class="alert alert-success alert-message" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>Profile updated successfully!
+                </div>
+                <div id="errorAlert" class="alert alert-danger alert-message" role="alert">
+                    <i class="bi bi-exclamation-circle me-2"></i><span id="errorMessage"></span>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="card profile-card">
+                    <!-- Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <h3 id="profileName" class="mb-2">Loading...</h3>
+                        <p class="mb-0 text-white-50" id="profileReg">Registration #</p>
+                    </div>
+
+                    <!-- Profile Body -->
+                    <div class="card-body p-4">
+                        <!-- View Section -->
+                        <div class="view-section" id="viewSection">
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <div class="info-label"><i class="bi bi-person me-2"></i>Full Name</div>
+                                    <div class="info-value" id="viewFullName">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label"><i class="bi bi-envelope me-2"></i>Email Address</div>
+                                    <div class="info-value" id="viewEmail">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label"><i class="bi bi-telephone me-2"></i>Phone Number</div>
+                                    <div class="info-value" id="viewPhone">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label"><i class="bi bi-geo-alt me-2"></i>Address</div>
+                                    <div class="info-value" id="viewAddress">-</div>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button class="btn btn-edit btn-primary" onclick="enableEditMode()">
+                                    <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Edit Form Section -->
+                        <form id="profileForm" class="form-section" onsubmit="saveProfile(event)">
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">
+                                    <i class="bi bi-person me-2"></i>Full Name
+                                </label>
+                                <input type="text" class="form-control" id="fullName" name="fullName" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope me-2"></i>Email Address
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">
+                                    <i class="bi bi-telephone me-2"></i>Phone Number
+                                </label>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="address" class="form-label">
+                                    <i class="bi bi-geo-alt me-2"></i>Address
+                                </label>
+                                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock me-2"></i>Password (Optional)
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-save btn-primary">
+                                    <i class="bi bi-check-circle me-2"></i>Save Changes
+                                </button>
+                                <button type="button" class="btn btn-cancel btn-secondary" onclick="cancelEditMode()">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Loading Spinner -->
+                        <div class="spinner-loader" id="loadingSpinner">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get logged-in user from localStorage
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            // Security check
+            if (!currentUser || !currentUser.customer_id) {
+                window.location.href = "../index.html";
+                return;
+            }
+
+            // Update navbar with user name
+            document.getElementById('userNameDisplay').innerHTML = `<i class="bi bi-person-circle"></i> ${currentUser.full_name}`;
+
+            // Load and display profile data
+            loadProfileData();
+        });
+
+        function loadProfileData() {
+            // Display data from currentUser object
+            document.getElementById('profileName').innerText = currentUser.full_name || 'Customer';
+            document.getElementById('profileReg').innerText = `Registration: ${currentUser.reg_no || 'N/A'}`;
+
+            // View section
+            document.getElementById('viewFullName').innerText = currentUser.full_name || '-';
+            document.getElementById('viewEmail').innerText = currentUser.email || '-';
+            document.getElementById('viewPhone').innerText = currentUser.phone || '-';
+            document.getElementById('viewAddress').innerText = currentUser.address || '-';
+
+            // Fill form fields
+            document.getElementById('fullName').value = currentUser.full_name || '';
+            document.getElementById('email').value = currentUser.email || '';
+            document.getElementById('phone').value = currentUser.phone || '';
+            document.getElementById('address').value = currentUser.address || '';
+        }
+
+        function enableEditMode() {
+            document.getElementById('viewSection').classList.add('hidden');
+            document.getElementById('profileForm').classList.add('active');
+        }
+
+        function cancelEditMode() {
+            document.getElementById('viewSection').classList.remove('hidden');
+            document.getElementById('profileForm').classList.remove('active');
+            // Reset form to current values
+            loadProfileData();
+        }
+
+        async function saveProfile(event) {
+            event.preventDefault();
+
+            const formData = {
+                full_name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                password: document.getElementById('password').value || undefined
+            };
+
+            // Show loading spinner
+            document.getElementById('loadingSpinner').classList.add('show');
+
+            try {
+                const response = await fetch(`http://localhost:3000/customers/${currentUser.customer_id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                document.getElementById('loadingSpinner').classList.remove('show');
+
+                if (response.ok) {
+                    // Update localStorage with new data
+                    currentUser.full_name = formData.full_name;
+                    currentUser.email = formData.email;
+                    currentUser.phone = formData.phone;
+                    currentUser.address = formData.address;
+                    if (formData.password) {
+                        currentUser.password = formData.password;
+                    }
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                    // Show success message
+                    showAlert('successAlert');
+
+                    // Reload data and exit edit mode
+                    setTimeout(() => {
+                        loadProfileData();
+                        cancelEditMode();
+                        hideAlert('successAlert');
+                    }, 2000);
+                } else {
+                    const error = await response.json();
+                    showAlert('errorAlert', error.error || 'Failed to update profile');
+                }
+            } catch (error) {
+                document.getElementById('loadingSpinner').classList.remove('show');
+                console.error('Profile update error:', error);
+                showAlert('errorAlert', 'Error connecting to server. Please try again.');
+            }
+        }
+
+        function showAlert(alertId, message = '') {
+            const alertElement = document.getElementById(alertId);
+            if (message) {
+                document.getElementById('errorMessage').innerText = message;
+            }
+            alertElement.classList.add('show');
+        }
+
+        function hideAlert(alertId) {
+            const alertElement = document.getElementById(alertId);
+            alertElement.classList.remove('show');
+        }
+    </script>
+</body>
+</html>

@@ -10,6 +10,7 @@
     <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../CSS/reports.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -33,7 +34,7 @@
             <h4 class="mb-0 text-primary fw-bold">System Reports & Analytics</h4>
             <div class="ms-auto d-flex gap-2">
                 <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
-                <button class="btn btn-primary btn-sm"><i class="bi bi-download"></i> Export PDF</button>
+                <button id="exportPdfBtn" class="btn btn-primary btn-sm"><i class="bi bi-download"></i> Export PDF</button>
             </div>
         </nav>
 
@@ -43,22 +44,28 @@
                 <form class="row g-3 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label small fw-bold">Report Type</label>
-                        <select class="form-select">
-                            <option>Revenue Report</option>
-                            <option>Service Frequency</option>
-                            <option>Inventory Usage</option>
+                        <select id="reportType" class="form-select">
+                            <option>Income Report</option>
+                            <option>Vehicle Service Report</option>
+                            <option>Inventory Report</option>
                         </select>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-bold">From Date</label>
-                        <input type="date" class="form-control" value="2026-03-01">
+                        <input id="fromDate" type="date" class="form-control" value="2026-03-01">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-bold">To Date</label>
-                        <input type="date" class="form-control" value="2026-03-31">
+                        <input id="toDate" type="date" class="form-control" value="2026-03-31">
+                    </div>
+                    <div class="col-md-3 d-none" id="vehicleFilterWrap">
+                        <label class="form-label small fw-bold">Select Vehicle</label>
+                        <select id="reportVehicle" class="form-select">
+                            <option value="" selected disabled>Select Vehicle</option>
+                        </select>
                     </div>
                     <div class="col-md-3">
-                        <button type="button" class="btn btn-primary w-100">Generate Report</button>
+                        <button id="generateReportBtn" type="button" class="btn btn-primary w-100">Generate Report</button>
                     </div>
                 </form>
             </div>
@@ -68,30 +75,30 @@
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3">
-                    <small class="text-muted fw-bold">ANNUAL REVENUE</small>
-                    <h3 class="text-primary">24,500</h3>
-                    <span class="text-success small"><i class="bi bi-arrow-up"></i> 12% vs last year</span>
+                    <small id="kpi1Label" class="text-muted fw-bold">ANNUAL REVENUE</small>
+                    <h3 id="kpi1Value" class="text-primary">0.00</h3>
+                    <span id="kpi1Meta" class="text-success small">Calculated from invoices/services</span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3">
-                    <small class="text-muted fw-bold">SERVICES COMPLETED</small>
-                    <h3 class="text-dark">1,142</h3>
-                    <span class="text-muted small">Target: 1,500</span>
+                    <small id="kpi2Label" class="text-muted fw-bold">SERVICES COMPLETED</small>
+                    <h3 id="kpi2Value" class="text-dark">0</h3>
+                    <span id="kpi2Meta" class="text-muted small">Filtered by date range</span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3">
-                    <small class="text-muted fw-bold">AVG. INVOICE VALUE</small>
-                    <h3 class="text-dark">115.20</h3>
-                    <span class="text-danger small"><i class="bi bi-arrow-down"></i> 2% from last month</span>
+                    <small id="kpi3Label" class="text-muted fw-bold">AVG. INVOICE VALUE</small>
+                    <h3 id="kpi3Value" class="text-dark">0.00</h3>
+                    <span id="kpi3Meta" class="text-muted small">Based on available invoices</span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3">
-                    <small class="text-muted fw-bold">TOP SERVICE</small>
-                    <h3 class="text-dark">Oil Change</h3>
-                    <span class="text-primary small">42% of total jobs</span>
+                    <small id="kpi4Label" class="text-muted fw-bold">TOP SERVICE</small>
+                    <h3 id="kpi4Value" class="text-dark">N/A</h3>
+                    <span id="kpi4Meta" class="text-primary small">Most frequent in selected period</span>
                 </div>
             </div>
         </div>
@@ -100,7 +107,7 @@
         <div class="row mb-4">
             <div class="col-md-8">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white fw-bold">Revenue Trend (Monthly)</div>
+                    <div id="chart1Title" class="card-header bg-white fw-bold">Revenue Trend (Monthly)</div>
                     <div class="card-body">
                         <canvas id="revenueChart" height="300"></canvas>
                     </div>
@@ -108,7 +115,7 @@
             </div>
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white fw-bold">Service Type Distribution</div>
+                    <div id="chart2Title" class="card-header bg-white fw-bold">Service Type Distribution</div>
                     <div class="card-body">
                         <canvas id="serviceChart" height="300"></canvas>
                     </div>
@@ -116,6 +123,263 @@
             </div>
         </div>
 
+        <div class="card border-0 shadow-sm">
+            <div id="detailsTitle" class="card-header bg-white fw-bold">Report Details</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead id="detailsHead" class="bg-light small fw-bold"></thead>
+                        <tbody id="detailsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="vehicleReportPreviewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Vehicle Service Report Preview</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="vehicleReportPaper">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div><strong>Report ID:</strong> <span id="vrReportId">-</span></div>
+                        <div class="text-end">
+                            <div class="fw-bold">CHINTHAKA SERVICE CENTER</div>
+                            <div>No. 123 Garage Lane, Auto City, Galle</div>
+                            <div>Tel: +94 11 234 5678</div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-center mb-3">Vehicle Service Report</h5>
+                    <div class="mb-3"><strong>Date:</strong> <span id="vrDate">-</span></div>
+
+                    <h6 class="fw-bold mb-2">Customer Details</h6>
+                    <div class="mb-1"><strong>Customer Name:</strong> <span id="vrCustomerName">-</span></div>
+                    <div class="mb-3"><strong>Contact Number:</strong> <span id="vrCustomerPhone">-</span></div>
+
+                    <h6 class="fw-bold mb-2">VEHICLE DETAILS</h6>
+                    <div class="mb-1"><strong>Vehicle Number:</strong> <span id="vrVehicleNo">-</span></div>
+                    <div class="mb-1"><strong>Vehicle Type:</strong> <span id="vrVehicleType">-</span></div>
+                    <div class="mb-1"><strong>Brand &amp; Model:</strong> <span id="vrBrandModel">-</span></div>
+                    <div class="mb-3"><strong>Mileage:</strong> <span id="vrMileage">-</span> km</div>
+
+                    <h6 class="fw-bold mb-2">SERVICE DETAILS</h6>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vrServiceDetailsBody"></tbody>
+                    </table>
+
+                    <h6 class="fw-bold mb-2">PARTS &amp; CONSUMABLES USED</h6>
+                    <table class="table table-bordered mb-2">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Cost (Rs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vrPartsBody"></tbody>
+                    </table>
+                    <div class="mb-3"><strong>Total Parts Cost:</strong> <span id="vrTotalParts">0.00</span></div>
+
+                    <div class="mb-3"><strong>LABOR CHARGES:</strong> <span id="vrLaborCharges">0.00</span></div>
+
+                    <h6 class="fw-bold mb-2">TOTAL COST SUMMARY</h6>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Labor Charges</td><td id="vrSummaryLabor">0.00</td></tr>
+                            <tr><td>Parts &amp; Consumables</td><td id="vrSummaryParts">0.00</td></tr>
+                            <tr class="table-light fw-bold"><td>GRAND TOTAL</td><td id="vrSummaryGrand">0.00</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-2"><strong>Prepared By:</strong> <span id="vrPreparedBy">____________________</span></div>
+                        <div class="col-md-6 mb-2"><strong>Authorized Officer:</strong> <span id="vrAuthorizedOfficer">____________________</span></div>
+                        <div class="col-md-6 mb-2"><strong>Signature:</strong> ____________________</div>
+                        <div class="col-md-6 mb-2"><strong>Customer Signature:</strong> ___________________________</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="printVehicleReportBtn" class="btn btn-primary"><i class="bi bi-printer"></i> Print Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="incomeReportPreviewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Monthly Income Report Preview</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="incomeReportPaper">
+                    <h5 class="fw-bold mb-1">Vehicle Maintenance Service System (VSMS)</h5>
+                    <h6 class="fw-bold mb-3">Monthly Income Report</h6>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div><strong>Month:</strong> <span id="irMonth">-</span></div>
+                        <div><strong>Generated Date:</strong> <span id="irGeneratedDate">-</span></div>
+                    </div>
+
+                    <h6 class="fw-bold mb-2">Summary</h6>
+                    <table class="table table-bordered mb-3">
+                        <tbody>
+                            <tr><td>Total Revenue</td><td id="irTotalRevenue">-</td></tr>
+                            <tr><td>Total Services Completed</td><td id="irTotalServices">-</td></tr>
+                            <tr><td>Average Invoice Value</td><td id="irAvgInvoice">-</td></tr>
+                            <tr><td>Top Service</td><td id="irTopService">-</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h6 class="fw-bold mb-2">Revenue Breakdown</h6>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Invoice No</th>
+                                <th>Customer</th>
+                                <th>Service Type</th>
+                                <th>Amount (LKR)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="irRevenueBreakdownBody"></tbody>
+                    </table>
+
+                    <h6 class="fw-bold mb-2">Weekly Revenue Summary</h6>
+                    <table class="table table-bordered mb-3">
+                        <tbody>
+                            <tr><td>Week 1</td><td id="irWeek1">-</td></tr>
+                            <tr><td>Week 2</td><td id="irWeek2">-</td></tr>
+                            <tr><td>Week 3</td><td id="irWeek3">-</td></tr>
+                            <tr><td>Week 4</td><td id="irWeek4">-</td></tr>
+                            <tr class="table-light fw-bold"><td>Total</td><td id="irWeekTotal">-</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h6 class="fw-bold mb-2">Service-wise Income Distribution</h6>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th>Service Type</th>
+                                <th>Revenue (LKR)</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="irServiceDistributionBody"></tbody>
+                    </table>
+
+                    <h6 class="fw-bold mb-2">Analysis</h6>
+                    <p id="irAnalysisText" class="mb-4">-</p>
+
+                    <div class="row">
+                        <div class="col-md-6"><strong>Prepared By:</strong> <span id="irPreparedBy">____________________</span></div>
+                        <div class="col-md-6"><strong>Signature:</strong> ____________________</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="printIncomeReportBtn" class="btn btn-primary"><i class="bi bi-printer"></i> Print Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="inventoryReportPreviewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Inventory Report Preview</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="inventoryReportPaper">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div><strong>Report ID:</strong> <span id="invReportId">-</span></div>
+                        <div class="text-end">
+                            <div class="fw-bold">CHINTHAKA SERVICE CENTER</div>
+                            <div>No. 123 Garage Lane, Auto City, Galle</div>
+                            <div>Tel: +94 11 234 5678</div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-center mb-3">Inventory Report</h5>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div><strong>Month:</strong> <span id="invMonth">-</span></div>
+                        <div><strong>Generated Date:</strong> <span id="invGeneratedDate">-</span></div>
+                    </div>
+
+                    <h6 class="fw-bold mb-2">SUMMARY</h6>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Total Inventory Items</td><td id="invSummaryItems">-</td></tr>
+                            <tr><td>Total Stock Value (Rs.)</td><td id="invSummaryValue">-</td></tr>
+                            <tr><td>Low Stock Items</td><td id="invSummaryLow">-</td></tr>
+                            <tr><td>Out of Stock Items</td><td id="invSummaryOut">-</td></tr>
+                            <tr><td>Most Used Item</td><td id="invSummaryMostUsed">-</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h6 class="fw-bold mb-2">CURRENT STATUS</h6>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Stock Qty</th>
+                                <th>Unit Price (Rs.)</th>
+                                <th>Total Value (Rs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invCurrentStatusBody"></tbody>
+                    </table>
+
+                    <h6 class="fw-bold mb-2">TOP CONSUMED ITEMS</h6>
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity Used</th>
+                                <th>Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invTopConsumedBody"></tbody>
+                    </table>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-2"><strong>Prepared By:</strong> <span id="invPreparedBy">____________________</span></div>
+                        <div class="col-md-6 mb-2"><strong>Authorized Officer:</strong> <span id="invAuthorizedOfficer">____________________</span></div>
+                        <div class="col-md-6 mb-2"><strong>Signature:</strong> ____________________</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="printInventoryReportBtn" class="btn btn-primary"><i class="bi bi-printer"></i> Print Report</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

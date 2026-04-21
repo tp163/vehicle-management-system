@@ -1,0 +1,238 @@
+body {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #f8fbff 0%, #e2efff 100%);
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Sections */
+.section-title {
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.section-title::after {
+    content: '';
+    width: 60px;
+    height: 3px;
+    background: #0d6efd;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Cards */
+.service-card {
+    padding: 30px;
+    border: none;
+    transition: 0.3s;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(13, 110, 253, 0.1);
+}
+
+.pricing-card {
+    padding: 60px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 30px;
+}
+
+.pricing-card.active {
+    border: 2px solid #0d6efd;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+.btn-primary {
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-weight: 600;
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ensure the body takes up the full height of the screen */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* This pushes the footer to the bottom */
+main {
+    flex: 1 0 auto;
+}
+
+
+/* Footer Styling */
+.footer-links a:hover{
+    color:#0d6efd;
+    padding-left:5px;
+    transition:0.3s;
+}
+
+.footer i{
+    transition:0.3s;
+}
+
+.footer i:hover{
+    color:#0d6efd;
+}
+
+
+/* Hero Section Enhancements */
+.hero-section {
+    background: linear-gradient(135deg, #f8fbff 0%, #e2efff 100%);
+    border-bottom: 1px solid #dee2e6;
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+/* Styling the Image */
+.hero-main-img {
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    border: 8px solid white;
+    transition: transform 0.3s ease;
+}
+
+.hero-main-img:hover {
+    transform: scale(1.02);
+}
+
+.hero-img-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Optional: Add a subtle glow behind the image */
+.hero-img-container::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    background: rgba(13, 110, 253, 0.2);
+    filter: blur(50px);
+    z-index: -1;
+}
+
+/* Chatbot */
+.assistant-launcher {
+    border: 0;
+    border-radius: 999px;
+    box-shadow: 0 18px 40px rgba(31, 68, 123, 0.28);
+}
+
+.assistant-widget {
+    z-index: 1080;
+}
+
+.assistant-panel {
+    width: min(380px, calc(100vw - 1.5rem));
+    max-height: min(75vh, 640px);
+    overflow: hidden;
+    border: 0;
+    border-radius: 24px;
+}
+
+.assistant-panel .card-body {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.assistant-messages {
+    min-height: 220px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.assistant-message {
+    display: flex;
+    margin-bottom: 0.75rem;
+}
+
+.assistant-message-bubble {
+    max-width: 85%;
+    padding: 0.75rem 0.9rem;
+    border-radius: 1rem;
+    font-size: 0.94rem;
+    line-height: 1.45;
+    white-space: pre-line;
+}
+
+.assistant-message-bot .assistant-message-bubble {
+    background: #e9f2ff;
+    color: #0b2c5f;
+    border-top-left-radius: 0.35rem;
+}
+
+.assistant-message-user {
+    justify-content: flex-end;
+}
+
+.assistant-message-user .assistant-message-bubble {
+    background: #153a72;
+    color: #fff;
+    border-top-right-radius: 0.35rem;
+}
+
+.assistant-chip {
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.assistant-input::placeholder {
+    color: #8aa0c2;
+}
+
+.assistant-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.assistant-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(13, 110, 253, 0.25);
+    border-radius: 999px;
+}
+
+@media (max-width: 576px) {
+    .assistant-widget {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 0.75rem;
+        padding: 0 !important;
+    }
+
+    .assistant-panel {
+        width: 100%;
+    }
+}

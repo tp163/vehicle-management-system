@@ -62,7 +62,7 @@
                             <i class="bi bi-person-circle"></i> Amila Sandaruwan
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                            <li><a class="dropdown-item" href="#">Profile Settings</a></li>
+                            <li><a class="dropdown-item" href="customer-profile.html">Profile Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="../logout.html">Logout</a></li>
                         </ul>
@@ -77,8 +77,8 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h2 class="fw-bold">Welcome back, Amila!</h2>
-                    <p class="mb-0 text-white-50">Your Mitsubishi Lancer is currently being serviced.</p>
+                    <h2 class="fw-bold">Welcome back, <span id="welcomeName">Customer</span>!</h2>
+<p class="mb-0 text-white-50" id="heroStatusText">see your vehicle status...</p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <button class="btn btn-light btn-lg rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#bookServiceModal">
@@ -98,31 +98,31 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="fw-bold mb-0">Live Service Status</h5>
-                            <span class="badge bg-success">In Progress</span>
+                            <span id="liveStatusBadge" class="badge bg-secondary">No Active Service</span>
                         </div>
                         
                         <div class="text-center mb-4">
                             <h6 class="text-muted mb-1">Current Vehicle</h6>
-                            <h4 class="fw-bold">WP CAL-5050 (Mitsubishi Lancer)</h4>
+                            <h4 id="liveVehicleTitle" class="fw-bold">No Active Service</h4>
                         </div>
 
                         <!-- Step Tracker -->
                         <div class="position-relative py-3">
                             <div class="step-line"></div>
                             <div class="step-container">
-                                <div class="step-item active">
+                                <div id="stepReceived" class="step-item">
                                     <div class="step-dot"><i class="bi bi-check"></i></div>
                                     <div class="step-label small">Received</div>
                                 </div>
-                                <div class="step-item active">
+                                <div id="stepInspection" class="step-item">
                                     <div class="step-dot"><i class="bi bi-check"></i></div>
                                     <div class="step-label small">Inspection</div>
                                 </div>
-                                <div class="step-item active">
+                                <div id="stepRepairing" class="step-item">
                                     <div class="step-dot"><i class="bi bi-tools"></i></div>
                                     <div class="step-label small">Repairing</div>
                                 </div>
-                                <div class="step-item">
+                                <div id="stepReady" class="step-item">
                                     <div class="step-dot"><i class="bi bi-flag"></i></div>
                                     <div class="step-label small">Ready</div>
                                 </div>
@@ -131,9 +131,7 @@
 
                         <div class="alert alert-info border-0 mt-4 d-flex align-items-center">
                             <i class="bi bi-info-circle-fill fs-4 me-3"></i>
-                            <div>
-                                <strong>Mechanic's Note:</strong> Oil filter replaced. Currently checking brake pads. Estimated completion: Today, 4:00 PM.
-                            </div>
+                            <div id="mechanicNote"><strong>Mechanic's Note:</strong> No active workshop updates yet.</div>
                         </div>
                     </div>
                 </div>
@@ -202,11 +200,11 @@
 
 
 
-
-            <!-- My Garage Section -->
-            <div class="col-12 mt-4">
+<!--
+            //My Garage Section
+           <div class="col-12 mt-4">
                 <h5 class="fw-bold mb-3">My Garage</h5>
-                <!-- We removed the hardcoded cards. JavaScript will fill this div. -->
+                // We removed the hardcoded cards. JavaScript will fill this div.
                 <div class="row g-3" id="customerGarage">
                     <div class="col-12 text-center py-4">
                         <div class="spinner-border text-primary" role="status"></div>
@@ -214,12 +212,45 @@
                     </div>
                 </div>
             </div>
+-->
+
+            <!-- Booking Request Status -->
+            <div class="col-12 mt-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">My Booking Requests</h5>
+                        <span class="badge bg-primary" id="myBookingCount">0</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Requested On</th>
+                                        <th>Preferred Date</th>
+                                        <th>Vehicle</th>
+                                        <th>Service Type</th>
+                                        <th>Status</th>
+                                        <th>Admin Note</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="myBookingRequestsTable">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-3">Loading booking requests...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Recent Service History -->
             <div class="col-12 mt-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white py-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="fw-bold mb-0">Recent Service History</h5>
+                        <span class="badge bg-primary" id="serviceHistoryCount">0</span>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -233,20 +264,9 @@
                                         <th>Invoice</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="serviceHistoryTable">
                                     <tr>
-                                        <td>18 March 2026</td>
-                                        <td>Toyota Corolla</td>
-                                        <td>Full Service</td>
-                                        <td>Rs. 15,500</td>
-                                        <td><button class="btn btn-sm btn-light border"><i class="bi bi-download me-1"></i>PDF</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>18 March 2026</td>
-                                        <td>Mitsubishi Montero</td>
-                                        <td>Brake Pad Replacement</td>
-                                        <td>Rs. 8,200</td>
-                                        <td><button class="btn btn-sm btn-light border"><i class="bi bi-download me-1"></i>PDF</button></td>
+                                        <td colspan="5" class="text-center text-muted py-3">Loading service history...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -298,256 +318,575 @@
     </div>
 </div>
 
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-       document.addEventListener('DOMContentLoaded', function() {
-    // 1. Get the logged-in user
+
+
+<!-- Modal: Invoice Preview & Download -->
+<div class="modal fade" id="invoicePreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content p-5 invoice-paper shadow-lg border-0 rounded-0">
+            <!-- Invoice Header -->
+            <div class="d-flex justify-content-between mb-5">
+                <div>
+                    <h2 class="text-primary fw-bold mb-0">CHINTHAKA SERVICE CENTER</h2>
+                    <p class="text-muted small">No. 123 Garage Lane, Auto City, Galle<br>Tel: +94 11 234 5678</p>
+                </div>
+                <div class="text-end">
+                    <h1 class="display-6 fw-bold text-muted opacity-50">INVOICE</h1>
+                    <p class="mb-0 fw-bold" id="inv-job-no">#JOB-000</p>
+                    <p class="small text-muted" id="inv-date">Date: 2026/01/01</p>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-6">
+                    <h6 class="text-muted fw-bold border-bottom pb-2">BILL TO</h6>
+                    <h5 class="fw-bold mb-1" id="inv-customer">Customer Name</h5>
+                    <p class="mb-0" id="inv-vehicle">Vehicle: XX XXX - 0000</p>
+                </div>
+            </div>
+
+            <!-- Invoice Table -->
+            <table class="table table-bordered border-secondary border-opacity-10 mb-5">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-end" width="150">Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="inv-items">
+                    <!-- Dynamic content -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="text-end border-0">SUBTOTAL</th>
+                        <th class="text-end border-0" id="inv-subtotal">0.00</th>
+                    </tr>
+                    <tr class="table-primary border-primary">
+                        <th class="text-end">GRAND TOTAL</th>
+                        <th class="text-end" id="inv-total">0.00</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="d-flex justify-content-between mt-5 pt-5 text-center">
+                <div style="width: 200px;"><hr class="border-dark"><small>Customer Signature</small></div>
+                <div style="width: 200px;"><hr class="border-dark"><small>Authorized Officer</small></div>
+            </div>
+
+            <div class="modal-footer border-0 mt-5 no-print">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary px-4" onclick="window.print()"><i class="bi bi-printer me-2"></i>Print / Download PDF</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .invoice-paper {
+        background: white !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    @media print {
+        .no-print { display: none !important; }
+        .invoice-paper { box-shadow: none !important; margin: 0; }
+    }
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let customerVehicles = []; // Global variable to store vehicles
+let bookingEventDates = new Set();
+let currentCalendarDate = new Date();
+
+document.addEventListener('DOMContentLoaded', async function() {
+    // 1. Get the logged-in user session
     const user = JSON.parse(localStorage.getItem('currentUser'));
     
-    // Safety check: if no user, kick to login
+    // Safety check
     if (!user) { 
-        window.location.href = "../home.html"; 
+        window.location.href = "../index.html"; 
         return; 
     }
 
-    // --- 2. THE CONNECTION LOGIC ---
-    function updateBookingDropdown() {
-        const bVehicleSelect = document.getElementById('bVehicle');
-        if (!bVehicleSelect) return;
+    // 2. Personalize UI
+    document.getElementById('userNameDisplay').innerHTML = `<i class="bi bi-person-circle"></i> ${user.full_name}`;
+    document.getElementById('welcomeName').innerText = user.full_name.split(' ')[0];
 
-        // Fetch all vehicles from the global vehicle list (created in vehicles.html)
-        const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
-        
-        // FILTER: Only keep vehicles where the owner's name matches the current logged-in user's name
-        const myVehicles = allVehicles.filter(v => v.owner === user.name);
+    // --- 2.1 CALENDAR LOGIC ---
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        const monthLabel = document.getElementById('monthYearDisplay');
+        if (!grid || !monthLabel) return;
 
-        // Reset dropdown
-        bVehicleSelect.innerHTML = '<option value="WP CAL-5050" selected>WP CAL-5050 - Mitsubishi Lancer</option>';
-}
-        if (myVehicles.length === 0) {
-            bVehicleSelect.innerHTML = '<option value="" disabled selected>No vehicles registered. Please contact Admin.</option>';
-        } else {
-            bVehicleSelect.innerHTML = '<option value="" selected disabled>Choose your vehicle</option>';
-            myVehicles.forEach(v => {
-                const opt = document.createElement('option');
-                opt.value = v.plate; // We store the plate as the value
-                opt.textContent = `${v.plate} - ${v.brand} ${v.model}`;
-                bVehicleSelect.appendChild(opt);
-            });
+        const year = currentCalendarDate.getFullYear();
+        const month = currentCalendarDate.getMonth();
+        const today = new Date();
+
+        monthLabel.innerText = currentCalendarDate.toLocaleString('en-US', {
+            month: 'long',
+            year: 'numeric'
+        });
+
+        grid.innerHTML = '';
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'calendar-date';
+            empty.innerHTML = '&nbsp;';
+            grid.appendChild(empty);
         }
-    }
 
-    // Call this when the page loads
-    updateBookingDropdown();
-    
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateEl = document.createElement('div');
+            dateEl.className = 'calendar-date';
+            dateEl.innerText = day;
 
-
-    // Also update stats cards for "My Garage" dynamically
-    function updateGarageStats() {
-        const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
-        const myVehiclesCount = allVehicles.filter(v => v.owner === user.name).length;
-        
-        const garageStatEl = document.querySelector('.card h4.fw-bold'); // Selects the "2 Vehicles" text
-        if(garageStatEl) {
-            garageStatEl.innerText = `${myVehiclesCount} Vehicles`;
-        }
-    }
-    updateGarageStats();
-
-
-
-function updateLiveTracking() {
-    const allServices = JSON.parse(localStorage.getItem('vsms_services')) || [];
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-
-    // Find the most recent active service for this user
-    // (Assuming we match by owner name through vehicles)
-    const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
-    const myPlates = allVehicles.filter(v => v.owner === user.name).map(v => v.plate);
-    
-    const activeJob = allServices.find(s => myPlates.includes(s.plate) && s.status !== "Ready");
-
-    if (activeJob) {
-        document.querySelector('.text-center h4.fw-bold').innerText = `${activeJob.plate} (${activeJob.type})`;
-        // Logic to update the step-dot colors based on activeJob.status
-        const steps = document.querySelectorAll('.step-item');
-        if (activeJob.status === "In Progress") {
-            steps[0].classList.add('active');
-            steps[1].classList.add('active');
-            steps[2].classList.add('active');
-        }
-    }
-}
-updateLiveTracking();
-
-
-
-
-
-
-
- function renderGarageCards() {
-    const garageContainer = document.getElementById('customerGarage');
-    
-    // 1. Get the current logged-in user
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user) return;
-
-    // 2. Get the "Database" of vehicles (from the Admin Vehicles page)
-    const allVehicles = JSON.parse(localStorage.getItem('vsms_vehicles')) || [];
-
-    // 3. Filter vehicles where the owner name matches the logged-in user's name
-    // We use .trim() and .toLowerCase() to prevent errors if names were typed differently
-    const myVehicles = [
-    {
-        plate: "WP CAL-5050",
-        brand: "Mitsubishi",
-        model: "Lancer",
-        year: "2015",
-        status: "In Service",
-        owner: "Amila Sandaruwan"
-    }
-];
-
-    // 4. Update the "My Garage" Stat Card at the top of the dashboard
-    const statsGarageCount = document.querySelectorAll('.card h4.fw-bold')[0]; 
-    if (statsGarageCount) {
-        statsGarageCount.innerText = `${myVehicles.length} Vehicles`;
-    }
-
-    // 5. Build the UI
-    if (myVehicles.length === 0) {
-        garageContainer.innerHTML = `
-            <div class="col-12 text-center py-4 bg-white rounded shadow-sm border">
-                <i class="bi bi-car-front text-muted display-4"></i>
-                <p class="text-muted mt-2">No vehicles found. Please contact Admin to link your vehicle plate to your account.</p>
-            </div>`;
-        return;
-    }
-
-    garageContainer.innerHTML = ''; // Clear the "Loading" spinner
-
-    myVehicles.forEach(v => {
-        // Determine status style
-        const isInShop = v.status === "In Service" || v.status === "Due";
-        const badgeClass = isInShop ? "bg-info text-dark" : "bg-light text-success border";
-        
-        const cardHtml = `
-            <div class="col-md-6 col-lg-4">
-                <div class="card vehicle-card shadow-sm border-0 h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="plate-number">${v.plate}</span>
-                            <span class="badge ${badgeClass}">${v.status || 'On Road'}</span>
-                        </div>
-                        <h5 class="fw-bold mb-1">${v.brand} ${v.model}</h5>
-                        <p class="text-muted small">${v.year || 'N/A'} Model</p>
-                        <button class="btn btn-outline-primary btn-sm w-100" onclick="location.href='vehicle-history.html'">
-                            <i class="bi bi-clock-history me-1"></i>View History
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        garageContainer.innerHTML += cardHtml;
-    });
-}
-
-// Execute the function
-renderGarageCards();
-
-
-
-
-    // --- 2. HANDLE BOOKING SUBMISSION ---
-    const bookingForm = document.getElementById('bookingForm');
-    bookingForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const newBooking = {
-            id: 'BK-' + Date.now().toString().slice(-4),
-            customerName: user.name,
-            customerPhone: user.phone,
-            vehiclePlate: document.getElementById('bVehicle').value,
-            date: document.getElementById('bDate').value,
-            serviceType: document.getElementById('bType').value,
-            issues: document.getElementById('bIssues').value,
-            status: "Pending Approval", // Initial status
-            requestTime: new Date().toISOString()
-        };
-
-        // Get existing bookings or start new array
-        const allBookings = JSON.parse(localStorage.getItem('vsms_bookings')) || [];
-        allBookings.push(newBooking);
-        localStorage.setItem('vsms_bookings', JSON.stringify(allBookings));
-
-        alert("Booking request sent successfully! We will contact you shortly.");
-        
-        // Reset and close modal
-        bookingForm.reset();
-        bootstrap.Modal.getInstance(document.getElementById('bookServiceModal')).hide();
-    });
-
-   
-            // --- 2. MINI CALENDAR LOGIC ---
-            const monthYearDisplay = document.getElementById('monthYearDisplay');
-            const calendarGrid = document.getElementById('calendarGrid');
-            const prevBtn = document.getElementById('prevMonth');
-            const nextBtn = document.getElementById('nextMonth');
-
-            let currentDate = new Date();
-            let displayedMonth = currentDate.getMonth();
-            let displayedYear = currentDate.getFullYear();
-
-            const eventDates = [
-                new Date(displayedYear, displayedMonth, 15).toDateString(),
-                new Date(displayedYear, displayedMonth, 22).toDateString()
-            ];
-
-            function renderCalendar() {
-                calendarGrid.innerHTML = '';
-                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                monthYearDisplay.innerText = `${monthNames[displayedMonth]} ${displayedYear}`;
-
-                const firstDayIndex = new Date(displayedYear, displayedMonth, 1).getDay();
-                const lastDayDate = new Date(displayedYear, displayedMonth + 1, 0).getDate();
-
-                for (let i = 0; i < firstDayIndex; i++) {
-                    calendarGrid.appendChild(document.createElement('div'));
-                }
-
-                for (let i = 1; i <= lastDayDate; i++) {
-                    const dayDiv = document.createElement('div');
-                    dayDiv.classList.add('calendar-date');
-                    dayDiv.innerText = i;
-
-                    if (i === currentDate.getDate() && displayedMonth === currentDate.getMonth() && displayedYear === currentDate.getFullYear()) {
-                        dayDiv.classList.add('active');
-                    }
-
-                    const currentCellDateStr = new Date(displayedYear, displayedMonth, i).toDateString();
-                    if (eventDates.includes(currentCellDateStr)) {
-                        dayDiv.classList.add('has-event');
-                    }
-                    calendarGrid.appendChild(dayDiv);
-                }
+            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            if (bookingEventDates.has(dateKey)) {
+                dateEl.classList.add('has-event');
+                dateEl.title = 'Booking/Service date';
             }
 
-            prevBtn.addEventListener('click', () => {
-                displayedMonth--;
-                if (displayedMonth < 0) { displayedMonth = 11; displayedYear--; }
-                renderCalendar();
-            });
+            if (
+                day === today.getDate() &&
+                month === today.getMonth() &&
+                year === today.getFullYear()
+            ) {
+                dateEl.classList.add('active');
+            }
 
-            nextBtn.addEventListener('click', () => {
-                displayedMonth++;
-                if (displayedMonth > 11) { displayedMonth = 0; displayedYear++; }
-                renderCalendar();
-            });
+            grid.appendChild(dateEl);
+        }
+    }
 
-            renderCalendar();
+    document.getElementById('prevMonth')?.addEventListener('click', () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    document.getElementById('nextMonth')?.addEventListener('click', () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    // --- 3. FETCH VEHICLES FROM DATABASE ---
+    async function loadCustomerDashboard() {
+        const garageContainer = document.getElementById('customerGarage');
         
-    </script>
+        try {
+            console.log("Fetching vehicles for Customer ID:", user.customer_id);
+
+            // Fetch ALL vehicles (The backend handles the JOIN to get owner names if needed)
+            const response = await fetch(`http://localhost:3000/api/vehicles`);
+            
+            if (!response.ok) throw new Error("Failed to fetch vehicles");
+
+            const allVehicles = await response.json();
+            
+            // FILTER: Match using customer_id from your table
+            const myVehicles = allVehicles.filter(v => v.customer_id == user.customer_id);
+            
+            console.log("My Vehicles found:", myVehicles);
+
+            // 4. Update Stats Card
+            const statsGarageCount = document.querySelectorAll('.card h4.fw-bold')[0]; 
+            if (statsGarageCount) {
+                statsGarageCount.innerText = `${myVehicles.length} Vehicles`;
+            }
+
+            // 5. Render the cards
+            if (myVehicles.length === 0) {
+                garageContainer.innerHTML = `
+                    <div class="col-12 text-center py-4 bg-white rounded shadow-sm border">
+                        <i class="bi bi-car-front text-muted display-4"></i>
+                        <p class="text-muted mt-2">No vehicles found registered to your account.</p>
+                        <p class="small text-muted">Customer ID: ${user.customer_id}</p>
+                    </div>`;
+                return;
+            }
+
+            garageContainer.innerHTML = ''; // Clear spinner
+            myVehicles.forEach(v => {
+                // Determine status badge
+                const badgeClass = v.status === "In Service" ? "bg-info text-dark" : 
+                                   v.status === "Due" ? "bg-warning text-dark" : "bg-success text-white";
+                
+                garageContainer.innerHTML += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card vehicle-card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="plate-number">${v.plate_no}</span>
+                                    <span class="badge ${badgeClass}">${v.status || 'On Road'}</span>
+                                </div>
+                                <h5 class="fw-bold mb-1">${v.brand} ${v.model}</h5>
+                                <p class="text-muted small">${v.year} Model</p>
+                                <button class="btn btn-outline-primary btn-sm w-100" onclick="location.href='vehicle-history.html?plate=${v.plate_no}'">
+                                    <i class="bi bi-clock-history me-1"></i>View History
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            // Store vehicles globally for booking form use
+            customerVehicles = myVehicles;
+
+            // 6. Update other UI components
+            updateBookingDropdown(myVehicles);
+            const myPlates = myVehicles.map(v => v.plate_no);
+            checkLiveTracking(myVehicles);
+            loadRecentServiceHistory();  // Load service history after vehicles are available
+
+        } catch (error) {
+            console.error("Dashboard Load Error:", error);
+            garageContainer.innerHTML = `<div class="alert alert-danger">Error connecting to database.</div>`;
+        }
+    }
+
+    // --- 4. POPULATE BOOKING DROPDOWN ---
+    function updateBookingDropdown(vehicles) {
+        const select = document.getElementById('bVehicle');
+        if (!select) return;
+        select.innerHTML = '<option value="" selected disabled>Choose your vehicle</option>';
+        vehicles.forEach(v => {
+            select.innerHTML += `<option value="${v.vehicle_id}" data-plate="${v.plate_no}">${v.plate_no} - ${v.brand}</option>`;
+        });
+    }
+
+    // --- 5. LOAD CUSTOMER BOOKING REQUEST STATUS ---
+    async function loadMyBookingRequests() {
+        const tableBody = document.getElementById('myBookingRequestsTable');
+        const countBadge = document.getElementById('myBookingCount');
+        if (!tableBody) return;
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/booking-requests/customer/${user.customer_id}`);
+            if (!response.ok) throw new Error('Failed to load booking requests');
+
+            const requests = await response.json();
+            if (countBadge) countBadge.innerText = String(requests.length);
+
+            bookingEventDates = new Set(
+                requests
+                    .map(r => (r.service_date || '').slice(0, 10))
+                    .filter(Boolean)
+            );
+            renderCalendar();
+
+            if (requests.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">No booking requests found.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            requests.forEach(r => {
+                const requestedDate = r.requested_date ? new Date(r.requested_date).toLocaleDateString() : '-';
+                const preferredDate = r.service_date ? new Date(r.service_date).toLocaleDateString() : '-';
+                let statusBadge = '<span class="badge bg-secondary">Unknown</span>';
+
+                if (r.status === 'Pending') {
+                    statusBadge = '<span class="badge bg-warning text-dark">Pending</span>';
+                } else if (r.status === 'Approved') {
+                    statusBadge = '<span class="badge bg-success">Approved</span>';
+                } else if (r.status === 'Rejected') {
+                    statusBadge = '<span class="badge bg-danger">Rejected</span>';
+                }
+
+                let adminNote = 'Awaiting admin review.';
+                if (r.status === 'Approved') {
+                    adminNote = 'Your request has been approved. Please wait for service updates.';
+                } else if (r.status === 'Rejected') {
+                    adminNote = r.rejection_reason || 'No rejection reason provided.';
+                }
+
+                const vehicleText = `${r.plate_no || '-'}${r.brand ? ` (${r.brand} ${r.model || ''})` : ''}`;
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${requestedDate}</td>
+                        <td>${preferredDate}</td>
+                        <td>${vehicleText}</td>
+                        <td>${r.service_type || '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td>${adminNote}</td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            console.error('Error loading customer booking requests:', error);
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-3">Unable to load booking request status right now.</td></tr>';
+        }
+    }
+
+    // --- 6. CHECK LIVE TRACKING ---
+    async function checkLiveTracking(myVehicles) {
+        const statusLabel = document.getElementById('heroStatusText');
+        const liveTitle = document.getElementById('liveVehicleTitle');
+        const statusBadge = document.getElementById('liveStatusBadge');
+        const noteBox = document.getElementById('mechanicNote');
+        const steps = {
+            received: document.getElementById('stepReceived'),
+            inspection: document.getElementById('stepInspection'),
+            repairing: document.getElementById('stepRepairing'),
+            ready: document.getElementById('stepReady')
+        };
+
+        const clearSteps = () => {
+            Object.values(steps).forEach(step => step && step.classList.remove('active'));
+        };
+
+        const setBadge = (text, cls) => {
+            if (!statusBadge) return;
+            statusBadge.className = `badge ${cls}`;
+            statusBadge.innerText = text;
+        };
+
+        const applyStepProgress = (serviceStatus) => {
+            clearSteps();
+
+            if (serviceStatus === 'Pending') {
+                steps.received?.classList.add('active');
+                steps.inspection?.classList.add('active');
+                return;
+            }
+
+            if (serviceStatus === 'In Progress') {
+                steps.received?.classList.add('active');
+                steps.inspection?.classList.add('active');
+                steps.repairing?.classList.add('active');
+                return;
+            }
+
+            if (serviceStatus === 'Ready') {
+                steps.received?.classList.add('active');
+                steps.inspection?.classList.add('active');
+                steps.repairing?.classList.add('active');
+                steps.ready?.classList.add('active');
+            }
+        };
+
+        if (myVehicles.length === 0) {
+            clearSteps();
+            setBadge('No Active Service', 'bg-secondary');
+            if (statusLabel) statusLabel.innerText = 'No vehicles linked to your profile yet.';
+            if (liveTitle) liveTitle.innerText = 'No Active Service';
+            if (noteBox) noteBox.innerHTML = "<strong>Mechanic's Note:</strong> No active workshop updates yet.";
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/services');
+            if (!response.ok) throw new Error('Failed to fetch services');
+
+            const allServices = await response.json();
+            const myVehicleIds = myVehicles.map(v => String(v.vehicle_id));
+            const myServices = allServices
+                .filter(s => myVehicleIds.includes(String(s.vehicle_id)))
+                .sort((a, b) => new Date(b.service_date) - new Date(a.service_date));
+
+            if (myServices.length === 0) {
+                clearSteps();
+                setBadge('No Active Service', 'bg-secondary');
+                if (statusLabel) statusLabel.innerText = 'No service records found for your vehicles yet.';
+                if (liveTitle) liveTitle.innerText = 'No Active Service';
+                if (noteBox) noteBox.innerHTML = "<strong>Mechanic's Note:</strong> No active workshop updates yet.";
+                return;
+            }
+
+            const latestService = myServices[0];
+            const serviceVehicle = myVehicles.find(v => String(v.vehicle_id) === String(latestService.vehicle_id));
+            const plateNo = latestService.plate_no || serviceVehicle?.plate_no || 'N/A';
+            const modelText = serviceVehicle ? `${serviceVehicle.brand} ${serviceVehicle.model}` : 'Vehicle';
+
+            applyStepProgress(latestService.status);
+
+            if (latestService.status === 'Ready') {
+                setBadge('Ready', 'bg-success');
+            } else if (latestService.status === 'In Progress') {
+                setBadge('In Progress', 'bg-info text-dark');
+            } else if (latestService.status === 'Pending') {
+                setBadge('Pending', 'bg-warning text-dark');
+            } else {
+                setBadge(latestService.status || 'Unknown', 'bg-secondary');
+            }
+
+            if (statusLabel) {
+                statusLabel.innerText = `Your ${modelText} (${plateNo}) status: ${latestService.status}.`;
+            }
+            if (liveTitle) {
+                liveTitle.innerText = `${plateNo} (${modelText})`;
+            }
+            if (noteBox) {
+                const mechanicText = latestService.mechanic_name ? `Assigned Mechanic: ${latestService.mechanic_name}. ` : '';
+                noteBox.innerHTML = `<strong>Mechanic's Note:</strong> ${mechanicText}Current task: ${latestService.service_type || 'General Service'} (${latestService.status}).`;
+            }
+        } catch (error) {
+            console.error('Live tracking error:', error);
+            clearSteps();
+            setBadge('Unavailable', 'bg-danger');
+            if (statusLabel) statusLabel.innerText = 'Unable to load live service progress right now.';
+            if (liveTitle) liveTitle.innerText = 'Status Unavailable';
+            if (noteBox) noteBox.innerHTML = "<strong>Mechanic's Note:</strong> Unable to retrieve latest workshop update.";
+        }
+    }
+
+    // --- 8. LOAD RECENT SERVICE HISTORY ---
+    async function loadRecentServiceHistory() {
+        const tableBody = document.getElementById('serviceHistoryTable');
+        const countBadge = document.getElementById('serviceHistoryCount');
+        if (!tableBody) return;
+
+        try {
+            // Fetch invoices for this customer from database
+            const response = await fetch(`http://localhost:3000/api/invoices/customer/${user.customer_id}`);
+            if (!response.ok) throw new Error('Failed to load invoices');
+
+            const invoices = await response.json();
+            
+            if (countBadge) countBadge.innerText = String(invoices.length);
+
+            if (invoices.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">No invoices yet.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            invoices.forEach(invoice => {
+                const invoiceDate = invoice.created_at 
+                    ? new Date(invoice.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                    : '-';
+                const vehicleText = `Vehicle ID: ${invoice.vehicle_id}`;
+                const totalCost = parseFloat(invoice.total_amount) || 0;
+                const cost = totalCost ? `Rs. ${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'Rs. 0.00';
+
+                const row = `
+                    <tr>
+                        <td>${invoiceDate}</td>
+                        <td>${vehicleText}</td>
+                        <td>${invoice.description || '-'}</td>
+                        <td class="fw-bold text-primary">${cost}</td>
+                        <td>
+                            <button class="btn btn-sm btn-light border" onclick="viewInvoiceDetail(${invoice.invoice_id})">
+                                <i class="bi bi-download me-1"></i>PDF
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } catch (error) {
+            console.error('Error loading service history:', error);
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-3">Unable to load service history right now.</td></tr>';
+        }
+    }
+
+    // --- 9. DISPLAY INVOICE DETAIL ---
+    window.viewInvoiceDetail = async (invoiceId) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/invoices/${invoiceId}`);
+            if (!response.ok) throw new Error('Failed to load invoice');
+            
+            const invoice = await response.json();
+            const totalCost = parseFloat(invoice.total_amount) || 0;
+            const formattedTotal = totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formattedService = parseFloat(invoice.service_fee).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formattedParts = parseFloat(invoice.parts_fee).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            
+            document.getElementById('inv-job-no').innerText = '#' + invoice.invoice_no;
+            document.getElementById('inv-customer').innerText = 'Customer ID: ' + invoice.customer_id;
+            document.getElementById('inv-vehicle').innerText = 'Vehicle ID: ' + invoice.vehicle_id;
+            document.getElementById('inv-date').innerText = 'Date: ' + (invoice.created_at ? new Date(invoice.created_at).toLocaleString() : 'N/A');
+            document.getElementById('inv-subtotal').innerText = 'Rs.' + formattedTotal;
+            document.getElementById('inv-total').innerText = 'Rs.' + formattedTotal;
+
+            let itemsHtml = `
+                <tr>
+                    <td>Service: ${invoice.description || 'N/A'}</td>
+                    <td class="text-end">Rs.${formattedService}</td>
+                </tr>
+            `;
+
+            if (parseFloat(invoice.parts_fee) > 0) {
+                itemsHtml += `
+                    <tr>
+                        <td>Parts Total</td>
+                        <td class="text-end">Rs.${formattedParts}</td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById('inv-items').innerHTML = itemsHtml;
+            new bootstrap.Modal(document.getElementById('invoicePreviewModal')).show();
+        } catch (error) {
+            console.error('Error loading invoice detail:', error);
+            alert('Failed to load invoice: ' + error.message);
+        }
+    };
+
+    function normalizeAmount(value) {
+        return Number.parseFloat(value || 0) || 0;
+    }
+
+    // Initialize
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const vehicleId = parseInt(document.getElementById('bVehicle').value);
+            
+            // Find the selected vehicle from stored list
+            const selectedVehicle = customerVehicles.find(v => v.vehicle_id === vehicleId);
+            
+            if (!selectedVehicle) {
+                alert("Error: Vehicle not found. Please reload the page and try again.");
+                return;
+            }
+
+            const bookingData = {
+                customer_id: user.customer_id,
+                vehicle_id: vehicleId,
+                plate_no: selectedVehicle.plate_no,
+                service_date: document.getElementById('bDate').value,
+                service_type: document.getElementById('bType').value,
+                description: document.getElementById('bIssues').value
+            };
+
+            console.log('Sending booking data:', bookingData);
+
+            try {
+                const response = await fetch('http://localhost:3000/api/booking-requests', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bookingData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert("Service Request Submitted Successfully! The admin will review your request soon.");
+                    bootstrap.Modal.getInstance(document.getElementById('bookServiceModal')).hide();
+                    bookingForm.reset();
+                    loadMyBookingRequests();
+                } else {
+                    const error = await response.json();
+                    alert("Failed to submit request: " + (error.error || "Unknown error"));
+                }
+            } catch (error) {
+                console.error("Booking error:", error);
+                alert("Error connecting to server: " + error.message);
+            }
+        });
+    }
+
+    // Initialize
+    loadCustomerDashboard();
+    loadMyBookingRequests();
+    renderCalendar();
+});
+</script>
 </body>
 </html>

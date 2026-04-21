@@ -29,9 +29,14 @@
     <div class="main-content">
         <nav class="navbar bg-white shadow-sm mb-4 px-3 rounded">
             <h4 class="mb-0 text-primary fw-bold">Billing & Invoices</h4>
-            <button class="btn btn-primary btn-sm ms-auto" data-bs-toggle="modal" data-bs-target="#createInvoiceModal">
-                <i class="bi bi-plus-circle"></i> Create New Invoice
-            </button>
+            <div class="ms-auto d-flex gap-2">
+                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#estimateInvoiceModal">
+                    <i class="bi bi-calculator"></i> Estimate Bill
+                </button>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createInvoiceModal">
+                    <i class="bi bi-plus-circle"></i> Create New Invoice
+                </button>
+            </div>
         </nav>
 
         <!-- Invoice Table Card -->
@@ -72,16 +77,26 @@
                     <form id="invoiceForm">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Customer Name</label>
-                                <input type="text" id="custName" class="form-control" required>
+                                <label class="form-label small fw-bold">Vehicle</label>
+                                <select id="vehPlate" class="form-select" required>
+                                    <option value="" selected disabled>Select Vehicle</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold">Vehicle Plate No</label>
-                                <input type="text" id="vehPlate" class="form-control" placeholder="WP ABC-1234" required>
+                                <label class="form-label small fw-bold">Customer Name</label>
+                                <input type="text" id="custName" class="form-control" required readonly>
                             </div>
                             <div class="col-12">
-                                <label class="form-label small fw-bold">Service Description</label>
+                                <label class="form-label small fw-bold">Service Description (Auto from Services)</label>
                                 <textarea id="servDesc" class="form-control" rows="2" required></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Linked Job No</label>
+                                <input type="text" id="jobNo" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Service Status</label>
+                                <input type="text" id="jobStatus" class="form-control" readonly>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">Service Fee (Rs)</label>
@@ -89,15 +104,142 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">Parts Total (Rs)</label>
-                                <input type="number" id="partsFee" class="form-control" value="0">
+                                <input type="number" id="partsFee" class="form-control" value="0" readonly>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold text-primary">Grand Total (Rs)</label>
                                 <input type="text" id="totalAmt" class="form-control fw-bold border-primary" readonly>
                             </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Paid Amount (Rs)</label>
+                                <input type="number" id="paidAmt" class="form-control" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-danger">Balance / Excess (Rs)</label>
+                                <input type="text" id="balanceAmt" class="form-control fw-bold border-danger" readonly>
+                            </div>
+
+                            <div class="col-12 mt-2">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label small fw-bold mb-0">Used Parts List</label>
+                                    <button type="button" id="addPartRowBtn" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-plus-circle"></i> Add Part
+                                    </button>
+                                </div>
+                                <div class="table-responsive border rounded">
+                                    <table class="table table-sm align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 45%">Part</th>
+                                                <th style="width: 15%">Qty</th>
+                                                <th style="width: 20%">Unit Price</th>
+                                                <th style="width: 20%">Line Total</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="partsRowsBody">
+                                            <tr class="text-muted" id="noPartsRow">
+                                                <td colspan="5" class="text-center py-3">No parts added</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 mt-4 py-2 fw-bold">Generate & Save Invoice</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Estimate Bill (Pre-Service) -->
+    <div class="modal fade" id="estimateInvoiceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Estimate Customer Bill</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Vehicle</label>
+                        <select id="estVehicle" class="form-select">
+                            <option value="" selected disabled>Select Vehicle</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Customer</label>
+                        <input type="text" id="estCustomer" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label small fw-bold mb-0">Estimated Job Types</label>
+                            <button type="button" id="estAddJobRowBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-plus-circle"></i> Add Job Type
+                            </button>
+                        </div>
+                        <div class="table-responsive border rounded">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 45%">Job Type</th>
+                                        <th style="width: 15%">Qty</th>
+                                        <th style="width: 20%">Unit Charge</th>
+                                        <th style="width: 20%">Line Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="estJobRowsBody">
+                                    <tr class="text-muted" id="estNoJobsRow">
+                                        <td colspan="5" class="text-center py-2">No job types added</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Extra Charges (Manual) (Rs)</label>
+                        <input type="number" id="estExtraFee" class="form-control" value="0" min="0" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Estimated Service Charge Total (Rs)</label>
+                        <input type="number" id="estServiceFee" class="form-control" value="0" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label small fw-bold mb-0">Estimated Parts (From Inventory)</label>
+                            <button type="button" id="estAddPartRowBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-plus-circle"></i> Add Part
+                            </button>
+                        </div>
+                        <div class="table-responsive border rounded">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 45%">Part</th>
+                                        <th style="width: 15%">Qty</th>
+                                        <th style="width: 20%">Unit Price</th>
+                                        <th style="width: 20%">Line Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="estPartsRowsBody">
+                                    <tr class="text-muted" id="estNoPartsRow">
+                                        <td colspan="5" class="text-center py-2">No parts added</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="alert alert-primary d-flex justify-content-between align-items-center mb-0">
+                        <span class="fw-bold">Estimated Total Bill</span>
+                        <span id="estTotal" class="fs-5 fw-bold">Rs. 0.00</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="applyEstimateBtn">Use This Estimate in Invoice</button>
                 </div>
             </div>
         </div>
@@ -147,6 +289,14 @@
                         <tr class="table-primary border-primary">
                             <th class="text-end">GRAND TOTAL</th>
                             <th class="text-end" id="p-total">0.00</th>
+                        </tr>
+                        <tr>
+                            <th class="text-end">PAID AMOUNT</th>
+                            <th class="text-end" id="p-paid">0.00</th>
+                        </tr>
+                        <tr class="table-warning">
+                            <th class="text-end">BALANCE</th>
+                            <th class="text-end" id="p-balance">0.00</th>
                         </tr>
                     </tfoot>
                 </table>
